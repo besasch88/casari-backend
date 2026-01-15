@@ -1,0 +1,29 @@
+meta {
+  name: My List
+  type: http
+  seq: 1
+}
+
+get {
+  url: http://127.0.0.1:8001/api/v1/my/tables?includeClosed=true
+  body: none
+  auth: bearer
+}
+
+params:query {
+  includeClosed: true
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+script:post-response {
+  bru.setVar("firstUseCaseId", res.body?.items[0]?.id);
+  
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

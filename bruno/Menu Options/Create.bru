@@ -1,0 +1,32 @@
+meta {
+  name: Create
+  type: http
+  seq: 3
+}
+
+post {
+  url: http://127.0.0.1:8001/api/v1/menu/items/c5f2cd83-b2f1-4488-af02-1ef813cf7de4/options
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+body:json {
+  {
+    "title": "new",
+    "price": 200
+  }
+}
+
+script:post-response {
+  bru.setVar("firstMenuOptionId", res.body?.item?.id);
+  
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

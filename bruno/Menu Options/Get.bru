@@ -1,0 +1,25 @@
+meta {
+  name: Get
+  type: http
+  seq: 2
+}
+
+get {
+  url: http://127.0.0.1:8001/api/v1/menu/options/{{firstMenuOptionId}}
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+script:post-response {
+  bru.setVar("firstMenuOptionId", res.body?.item?.id);
+  
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

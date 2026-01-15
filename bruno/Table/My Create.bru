@@ -1,0 +1,31 @@
+meta {
+  name: My Create
+  type: http
+  seq: 3
+}
+
+post {
+  url: http://127.0.0.1:8001/api/v1/my/tables
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+body:json {
+  {
+    "name": "5-finestra"
+  }
+}
+
+script:post-response {
+  bru.setVar("firstUseCaseId", res.body?.item?.id);
+  
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

@@ -1,0 +1,29 @@
+# Build Go project using the builder platform
+FROM --platform=$BUILDPLATFORM golang:1.25 AS builder
+ARG TARGETOS
+ARG TARGETARCH
+
+WORKDIR /backend
+
+# Pre-download and install
+COPY go.mod go.sum ./
+RUN go mod download && go mod verify
+
+# Build
+COPY internal ./internal
+COPY .env ./
+COPY cmd/webapp/main.go ./
+RUN GOOS=${TARGETOS} GOARCH=${TARGETARCH} go build -o ./build/backend.app
+
+# Create the final image with the requested architecture (buildx)
+FROM debian:stable-slim AS production
+# Upgrade libraries and install WGET for health-check
+RUN  apt-get update \
+  && apt-get install -y wget \
+  && rm -rf /var/lib/apt/lists/*
+WORKDIR /go/bin/backend
+COPY --from=builder /backend/.env ./.env
+COPY --from=builder /backend/build/backend.app ./backend.app
+EXPOSE 8001
+ENTRYPOINT ["./backend.app"]
+

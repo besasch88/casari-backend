@@ -1,0 +1,28 @@
+meta {
+  name: Update
+  type: http
+  seq: 4
+}
+
+put {
+  url: http://127.0.0.1:8001/api/v1/menu/items/{{firstMenuItemId}}
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+body:json {
+  {
+    "position": 1,
+    "active": true,
+    "price": 1000
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

@@ -1,0 +1,119 @@
+services:
+  ceng-database:
+    image: postgres:18.1-alpine
+    restart: unless-stopped
+    ports:
+      - 54322:5432
+    volumes:
+      - ./volumes/ceng-database:/var/lib/postgresql
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-casari-eat-n-go}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-iUkcBQj2o_PpfX*uaXx7}
+      POSTGRES_DB: ${POSTGRES_DB:-casari-eat-n-go}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-casari-eat-n-go}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    networks:
+      - backend-network
+
+  ceng-migrate:
+    build:
+      context: ../
+      dockerfile: ./build/docker-migrate
+      target: production
+    image: backend-migrate
+    restart: no
+    depends_on:
+      ceng-database:
+        condition: service_healthy
+    environment:
+      DB_HOST: ${DB_HOST:-ceng-database}
+      DB_PORT: ${DB_PORT:-5432}
+      DB_USERNAME: ${DB_USERNAME:-casari-eat-n-go}
+      DB_PASSWORD: ${DB_PASSWORD:-iUkcBQj2o_PpfX*uaXx7}
+      DB_USER: ${DB_USER:-casari-eat-n-go}
+      DB_NAME: ${DB_NAME:-casari-eat-n-go}
+      DB_SSL_MODE: ${DB_SSL_MODE:-disable}
+    networks:
+      - backend-network
+
+  ceng-webapp:
+    build:
+      context: ../
+      dockerfile: build/docker-webapp
+      target: production
+    image: backend-webapp
+    restart: unless-stopped
+    ports:
+      - 8001:8001
+    depends_on:
+      ceng-database:
+        condition: service_healthy
+    environment:
+      DB_HOST: ${DB_HOST:-ceng-database}
+      DB_PORT: ${DB_PORT:-5432}
+      DB_USERNAME: ${DB_USERNAME:-casari-eat-n-go}
+      DB_PASSWORD: ${DB_PASSWORD:-iUkcBQj2o_PpfX*uaXx7}
+      DB_NAME: ${DB_NAME:-casari-eat-n-go}
+      DB_SSL_MODE: ${DB_SSL_MODE:-disable}
+      DB_LOG_SLOW_QUERY_THRESHOLD: ${DB_LOG_SLOW_QUERY_THRESHOLD:-1}
+      APP_PORT: ${APP_PORT:-8001}
+      APP_MODE: ${APP_MODE:-debug}
+      APP_CORS_ORIGIN: ${APP_CORS_ORIGIN:-http://localhost:5173}
+      SEARCH_RELEVANCE_THRESHOLD: ${SEARCH_RELEVANCE_THRESHOLD:-0.05}
+      PUBSUB_PERSIST_EVENTS_ON_DB: ${PUBSUB_PERSIST_EVENTS_ON_DB:-true}
+      PUBSUB_PERSIST_EVENTS_RETENTION_DAYS: ${PUBSUB_PERSIST_EVENTS_RETENTION_DAYS:-365}
+      PUBSUB_SYNC_MODE: ${PUBSUB_SYNC_MODE:-false}
+      AUTH_JWT_SECRET: ${AUTH_JWT_SECRET:-fake-jwt-secret-1234567890}
+      AUTH_JWT_ACCESS_TOKEN_DURATION: ${AUTH_JWT_ACCESS_TOKEN_DURATION:-600}
+      AUTH_JWT_REFRESH_TOKEN_DURATION: ${AUTH_JWT_REFRESH_TOKEN_DURATION:-86400}
+      AUTH_API_KEY_READ_ONLY: ${AUTH_API_KEY_READ_ONLY:-api-key-read-only-replace-me}
+      AUTH_API_KEY_READ_WRITE: ${AUTH_API_KEY_READ_WRITE:-api-key-read-write-replace-me}
+      AUTH_API_KEY_READ_ONLY_USERNAME: ${AUTH_API_KEY_READ_ONLY_USERNAME:-m2m_ro_username}
+      AUTH_API_KEY_READ_WRITE_USERNAME: ${AUTH_API_KEY_READ_WRITE_USERNAME:-m2m_rw_username}
+    healthcheck:
+      test: >
+        sh -c 'wget -S -q  -O -  http://127.0.0.1:8001/api/v1/health-check 2>&1 >/dev/null | grep "200 OK"'
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    networks:
+      - backend-network
+
+  ceng-cli:
+    build:
+      context: ../
+      dockerfile: build/docker-cli
+      target: production
+    image: backend-cli
+    restart: no
+    depends_on:
+      ceng-webapp:
+        condition: service_healthy
+    environment:
+      DB_HOST: ${DB_HOST:-ceng-database}
+      DB_PORT: ${DB_PORT:-5432}
+      DB_USERNAME: ${DB_USERNAME:-casari-eat-n-go}
+      DB_PASSWORD: ${DB_PASSWORD:-casari-eat-n-go}
+      DB_USER: ${DB_USER:-casari-eat-n-go}
+      DB_NAME: ${DB_NAME:-casari-eat-n-go}
+      DB_SSL_MODE: ${DB_SSL_MODE:-disable}
+      DB_LOG_SLOW_QUERY_THRESHOLD: ${DB_LOG_SLOW_QUERY_THRESHOLD:-1}
+      APP_PORT: ${APP_PORT:-8001}
+      APP_MODE: ${APP_MODE:-debug}
+      APP_CORS_ORIGIN: ${APP_CORS_ORIGIN:-http://localhost:5173}
+      SEARCH_RELEVANCE_THRESHOLD: ${SEARCH_RELEVANCE_THRESHOLD:-0.05}
+      PUBSUB_PERSIST_EVENTS_ON_DB: ${PUBSUB_PERSIST_EVENTS_ON_DB:-true}
+      PUBSUB_PERSIST_EVENTS_RETENTION_DAYS: ${PUBSUB_PERSIST_EVENTS_RETENTION_DAYS:-365}
+      PUBSUB_SYNC_MODE: ${PUBSUB_SYNC_MODE:-false}
+      AUTH_JWT_SECRET: ${AUTH_JWT_SECRET:-fake-jwt-secret-1234567890}
+      AUTH_JWT_ACCESS_TOKEN_DURATION: ${AUTH_JWT_ACCESS_TOKEN_DURATION:-600}
+      AUTH_JWT_REFRESH_TOKEN_DURATION: ${AUTH_JWT_REFRESH_TOKEN_DURATION:-86400}
+    networks:
+      - backend-network
+
+networks:
+  backend-network:
+    driver: bridge
