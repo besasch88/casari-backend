@@ -40,8 +40,8 @@ func (r tableRepository) listTables(tx *gorm.DB, userId *uuid.UUID, includeClose
 		queryCount = queryCount.Where("user_id = ?", userId)
 	}
 	if includeClosed == nil || !*includeClosed {
-		query = query.Where("is_open = ?", true)
-		queryCount = queryCount.Where("is_open = ?", true)
+		query = query.Where("closed = ?", false)
+		queryCount = queryCount.Where("closed = ?", false)
 	}
 	if forUpdate {
 		query.Clauses(clause.Locking{Strength: "UPDATE"})
@@ -82,7 +82,7 @@ func (r tableRepository) getTableByID(tx *gorm.DB, tableID uuid.UUID, userId *uu
 
 func (r tableRepository) getOpenTableByName(tx *gorm.DB, tableName string, forUpdate bool) (tableEntity, error) {
 	var model *tableModel
-	query := tx.Where("name = ?", tableName).Where("is_open = ?", true)
+	query := tx.Where("name = ?", tableName).Where("closed = ?", false)
 
 	if forUpdate {
 		query.Clauses(clause.Locking{Strength: "UPDATE"})

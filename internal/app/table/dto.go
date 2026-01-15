@@ -43,7 +43,7 @@ func (r createTableInputDto) validate() error {
 type updateTableInputDto struct {
 	ID            string                     `uri:"tableId"`
 	Name          *string                    `json:"name"`
-	IsOpen        *bool                      `json:"isOpen"`
+	Close         *bool                      `json:"close"`
 	PaymentMethod *ceng_pubsub.PaymentMethod `json:"paymentMethod"`
 	UserId        *uuid.UUID
 }
@@ -52,7 +52,7 @@ func (r updateTableInputDto) validate() error {
 	return validation.ValidateStruct(&r,
 		validation.Field(&r.ID, validation.Required, is.UUID),
 		validation.Field(&r.Name, validation.NilOrNotEmpty, validation.Length(1, 255)),
-		validation.Field(&r.IsOpen, validation.In(true, false)),
+		validation.Field(&r.Close, validation.In(true, false)),
 		validation.Field(&r.PaymentMethod, validation.NilOrNotEmpty, validation.In("card", "cash")),
 	)
 }

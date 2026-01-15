@@ -69,10 +69,6 @@ services:
       AUTH_JWT_SECRET: ${AUTH_JWT_SECRET:-fake-jwt-secret-1234567890}
       AUTH_JWT_ACCESS_TOKEN_DURATION: ${AUTH_JWT_ACCESS_TOKEN_DURATION:-600}
       AUTH_JWT_REFRESH_TOKEN_DURATION: ${AUTH_JWT_REFRESH_TOKEN_DURATION:-86400}
-      AUTH_API_KEY_READ_ONLY: ${AUTH_API_KEY_READ_ONLY:-api-key-read-only-replace-me}
-      AUTH_API_KEY_READ_WRITE: ${AUTH_API_KEY_READ_WRITE:-api-key-read-write-replace-me}
-      AUTH_API_KEY_READ_ONLY_USERNAME: ${AUTH_API_KEY_READ_ONLY_USERNAME:-m2m_ro_username}
-      AUTH_API_KEY_READ_WRITE_USERNAME: ${AUTH_API_KEY_READ_WRITE_USERNAME:-m2m_rw_username}
     healthcheck:
       test: >
         sh -c 'wget -S -q  -O -  http://127.0.0.1:8001/api/v1/health-check 2>&1 >/dev/null | grep "200 OK"'

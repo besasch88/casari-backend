@@ -60,7 +60,7 @@ func (s tableService) createTable(ctx *gin.Context, input createTableInputDto) (
 		ID:            uuid.New(),
 		UserID:        *input.UserId,
 		Name:          input.Name,
-		Close:       ceng_utils.BoolPtr(false),
+		Close:         ceng_utils.BoolPtr(false),
 		PaymentMethod: nil,
 		CreatedAt:     now,
 		UpdatedAt:     now,
@@ -84,7 +84,7 @@ func (s tableService) createTable(ctx *gin.Context, input createTableInputDto) (
 					ID:            newTable.ID,
 					UserID:        newTable.UserID,
 					Name:          newTable.Name,
-					Close:       newTable.Close,
+					Close:         newTable.Close,
 					PaymentMethod: newTable.PaymentMethod,
 					CreatedAt:     newTable.CreatedAt,
 					UpdatedAt:     newTable.UpdatedAt,
@@ -132,8 +132,8 @@ func (s tableService) updateTable(ctx *gin.Context, input updateTableInputDto) (
 			}
 			updatedTable.Name = *input.Name
 		}
-		if input.IsOpen != nil {
-			updatedTable.Close = input.IsOpen
+		if input.Close != nil {
+			updatedTable.Close = input.Close
 		}
 		if input.PaymentMethod != nil {
 			updatedTable.PaymentMethod = input.PaymentMethod
@@ -155,7 +155,7 @@ func (s tableService) updateTable(ctx *gin.Context, input updateTableInputDto) (
 					ID:            updatedTable.ID,
 					UserID:        updatedTable.UserID,
 					Name:          updatedTable.Name,
-					Close:       updatedTable.Close,
+					Close:         updatedTable.Close,
 					PaymentMethod: updatedTable.PaymentMethod,
 					CreatedAt:     updatedTable.CreatedAt,
 					UpdatedAt:     updatedTable.UpdatedAt,
@@ -201,7 +201,7 @@ func (s tableService) deleteTable(ctx *gin.Context, input deleteTableInputDto) (
 					ID:            currentTable.ID,
 					UserID:        currentTable.UserID,
 					Name:          currentTable.Name,
-					Close:       currentTable.Close,
+					Close:         currentTable.Close,
 					PaymentMethod: currentTable.PaymentMethod,
 					CreatedAt:     currentTable.CreatedAt,
 					UpdatedAt:     currentTable.UpdatedAt,
