@@ -1,11 +1,11 @@
 meta {
-  name: My Create
+  name: Create
   type: http
-  seq: 3
+  seq: 5
 }
 
 post {
-  url: http://127.0.0.1:8001/api/v1/my/tables
+  url: http://127.0.0.1:8001/api/v1/tables
   body: json
   auth: bearer
 }
@@ -16,12 +16,12 @@ auth:bearer {
 
 body:json {
   {
-    "name": "5-finestra"
+    "name": "7-Finestra"
   }
 }
 
 script:post-response {
-  bru.setVar("firstUseCaseId", res.body?.item?.id);
+  bru.setVar("firstTableId", res.body?.item?.id);
   
 }
 

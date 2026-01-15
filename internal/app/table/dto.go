@@ -1,15 +1,12 @@
 package table
 
 import (
-	"github.com/casari-eat-n-go/backend/internal/pkg/ceng_pubsub"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/go-ozzo/ozzo-validation/v4/is"
-	"github.com/google/uuid"
 )
 
 type ListTablesInputDto struct {
 	IncludeClosed *bool `form:"includeClosed"`
-	UserId        *uuid.UUID
 }
 
 func (r ListTablesInputDto) validate() error {
@@ -19,8 +16,7 @@ func (r ListTablesInputDto) validate() error {
 }
 
 type getTableInputDto struct {
-	ID     string `uri:"tableId"`
-	UserId *uuid.UUID
+	ID string `uri:"tableId"`
 }
 
 func (r getTableInputDto) validate() error {
@@ -30,8 +26,7 @@ func (r getTableInputDto) validate() error {
 }
 
 type createTableInputDto struct {
-	Name   string `json:"name"`
-	UserId *uuid.UUID
+	Name string `json:"name"`
 }
 
 func (r createTableInputDto) validate() error {
@@ -41,11 +36,10 @@ func (r createTableInputDto) validate() error {
 }
 
 type updateTableInputDto struct {
-	ID            string                     `uri:"tableId"`
-	Name          *string                    `json:"name"`
-	Close         *bool                      `json:"close"`
-	PaymentMethod *ceng_pubsub.PaymentMethod `json:"paymentMethod"`
-	UserId        *uuid.UUID
+	ID            string  `uri:"tableId"`
+	Name          *string `json:"name"`
+	Close         *bool   `json:"close"`
+	PaymentMethod *string `json:"paymentMethod"`
 }
 
 func (r updateTableInputDto) validate() error {
@@ -58,8 +52,7 @@ func (r updateTableInputDto) validate() error {
 }
 
 type deleteTableInputDto struct {
-	ID     string `uri:"tableId"`
-	UserId *uuid.UUID
+	ID string `uri:"tableId"`
 }
 
 func (r deleteTableInputDto) validate() error {

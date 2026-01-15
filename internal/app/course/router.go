@@ -1,4 +1,4 @@
-package table
+package course
 
 import (
 	"time"
@@ -11,29 +11,29 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type tableRouterInterface interface {
+type courseRouterInterface interface {
 	register(engine *gin.RouterGroup)
 }
 
-type tableRouter struct {
-	service tableServiceInterface
+type courseRouter struct {
+	service courseServiceInterface
 }
 
-func newTableRouter(service tableServiceInterface) tableRouter {
-	return tableRouter{
+func newCourseRouter(service courseServiceInterface) courseRouter {
+	return courseRouter{
 		service: service,
 	}
 }
 
 // Implementation
-func (r tableRouter) register(router *gin.RouterGroup) {
+func (r courseRouter) register(router *gin.RouterGroup) {
 	router.GET(
-		"/tables",
-		ceng_auth.AuthMiddleware([]string{ceng_auth.READ_OTHER_TABLES}),
+		"/tables/:tableId/courses",
+		ceng_auth.AuthMiddleware([]string{ceng_auth.READ_MENU}),
 		ceng_timeout.TimeoutMiddleware(time.Duration(1)*time.Second),
 		func(ctx *gin.Context) {
 			// Input validation
-			var request ListTablesInputDto
+			var request ListCoursesInputDto
 			if err := ceng_router.BindParameters(ctx, &request); err != nil {
 				ceng_router.ReturnValidationError(ctx, err)
 				return
@@ -43,11 +43,14 @@ func (r tableRouter) register(router *gin.RouterGroup) {
 				return
 			}
 			// Business Logic
-			items, totalCount, err := r.service.listTables(ctx, request)
-
+			items, totalCount, err := r.service.listCourses(ctx, request)
+			if err == errTableNotFound {
+				ceng_router.ReturnNotFoundError(ctx, err)
+				return
+			}
 			// Errors and output handler
 			if err != nil {
-				zap.L().Error("Something went wrong", zap.String("service", "table-router"), zap.Error(err))
+				zap.L().Error("Something went wrong", zap.String("service", "course-router"), zap.Error(err))
 				ceng_router.ReturnGenericError(ctx)
 				return
 			}
@@ -55,29 +58,27 @@ func (r tableRouter) register(router *gin.RouterGroup) {
 		})
 
 	router.POST(
-		"/tables",
-		ceng_auth.AuthMiddleware([]string{ceng_auth.READ_MY_TABLES, ceng_auth.WRITE_MY_TABLES}),
+		"/tables/:tableId/courses",
+		ceng_auth.AuthMiddleware([]string{ceng_auth.READ_MENU, ceng_auth.WRITE_MENU}),
 		ceng_timeout.TimeoutMiddleware(time.Duration(1)*time.Second),
 		func(ctx *gin.Context) {
 			// Input validation
-			var request createTableInputDto
-			if err := ceng_router.BindParameters(ctx, &request); err != nil {
-				ceng_router.ReturnValidationError(ctx, err)
-				return
+			request := createCourseInputDto{
+				TableId: ctx.Param("tableId"),
 			}
 			if err := request.validate(); err != nil {
 				ceng_router.ReturnValidationError(ctx, err)
 				return
 			}
 			// Business Logic
-			item, err := r.service.createTable(ctx, request)
-			if err == errTableSameNameAlreadyExists {
-				ceng_router.ReturnBadRequestError(ctx, err)
+			item, err := r.service.createCourse(ctx, request)
+			if err == errTableNotFound {
+				ceng_router.ReturnNotFoundError(ctx, err)
 				return
 			}
 			// Errors and output handler
 			if err != nil {
-				zap.L().Error("Something went wrong", zap.String("service", "table-router"), zap.Error(err))
+				zap.L().Error("Something went wrong", zap.String("service", "course-router"), zap.Error(err))
 				ceng_router.ReturnGenericError(ctx)
 				return
 			}
@@ -85,12 +86,12 @@ func (r tableRouter) register(router *gin.RouterGroup) {
 		})
 
 	router.GET(
-		"/tables/:tableId",
-		ceng_auth.AuthMiddleware([]string{ceng_auth.READ_OTHER_TABLES}),
+		"/courses/:courseId",
+		ceng_auth.AuthMiddleware([]string{ceng_auth.READ_MENU}),
 		ceng_timeout.TimeoutMiddleware(time.Duration(1)*time.Second),
 		func(ctx *gin.Context) {
 			// Input validation
-			var request getTableInputDto
+			var request getCourseInputDto
 			if err := ceng_router.BindParameters(ctx, &request); err != nil {
 				ceng_router.ReturnValidationError(ctx, err)
 				return
@@ -100,14 +101,14 @@ func (r tableRouter) register(router *gin.RouterGroup) {
 				return
 			}
 			// Business Logic
-			item, err := r.service.getTableByID(ctx, request)
-			if err == errTableNotFound {
+			item, err := r.service.getCourseByID(ctx, request)
+			if err == errCourseNotFound {
 				ceng_router.ReturnNotFoundError(ctx, err)
 				return
 			}
 			// Errors and output handler
 			if err != nil {
-				zap.L().Error("Something went wrong", zap.String("service", "table-router"), zap.Error(err))
+				zap.L().Error("Something went wrong", zap.String("service", "course-router"), zap.Error(err))
 				ceng_router.ReturnGenericError(ctx)
 				return
 			}
@@ -115,12 +116,12 @@ func (r tableRouter) register(router *gin.RouterGroup) {
 		})
 
 	router.PUT(
-		"/tables/:tableId",
-		ceng_auth.AuthMiddleware([]string{ceng_auth.READ_OTHER_TABLES, ceng_auth.WRITE_OTHER_TABLES}),
+		"/courses/:courseId",
+		ceng_auth.AuthMiddleware([]string{ceng_auth.READ_MENU, ceng_auth.WRITE_MENU}),
 		ceng_timeout.TimeoutMiddleware(time.Duration(1)*time.Second),
 		func(ctx *gin.Context) {
 			// Input validation
-			var request updateTableInputDto
+			var request updateCourseInputDto
 			if err := ceng_router.BindParameters(ctx, &request); err != nil {
 				ceng_router.ReturnValidationError(ctx, err)
 				return
@@ -130,18 +131,14 @@ func (r tableRouter) register(router *gin.RouterGroup) {
 				return
 			}
 			// Business Logic
-			item, err := r.service.updateTable(ctx, request)
-			if err == errTableNotFound {
+			item, err := r.service.updateCourse(ctx, request)
+			if err == errCourseNotFound {
 				ceng_router.ReturnNotFoundError(ctx, err)
-				return
-			}
-			if err == errTableSameNameAlreadyExists {
-				ceng_router.ReturnBadRequestError(ctx, err)
 				return
 			}
 			// Errors and output handler
 			if err != nil {
-				zap.L().Error("Something went wrong", zap.String("service", "table-router"), zap.Error(err))
+				zap.L().Error("Something went wrong", zap.String("service", "course-router"), zap.Error(err))
 				ceng_router.ReturnGenericError(ctx)
 				return
 			}
@@ -149,12 +146,12 @@ func (r tableRouter) register(router *gin.RouterGroup) {
 		})
 
 	router.DELETE(
-		"/tables/:tableId",
-		ceng_auth.AuthMiddleware([]string{ceng_auth.READ_OTHER_TABLES, ceng_auth.WRITE_OTHER_TABLES}),
+		"/courses/:courseId",
+		ceng_auth.AuthMiddleware([]string{ceng_auth.READ_MENU, ceng_auth.WRITE_MENU}),
 		ceng_timeout.TimeoutMiddleware(time.Duration(1)*time.Second),
 		func(ctx *gin.Context) {
 			// Input validation
-			var request deleteTableInputDto
+			var request deleteCourseInputDto
 			if err := ceng_router.BindParameters(ctx, &request); err != nil {
 				ceng_router.ReturnValidationError(ctx, err)
 				return
@@ -164,18 +161,17 @@ func (r tableRouter) register(router *gin.RouterGroup) {
 				return
 			}
 			// Business Logic
-			_, err := r.service.deleteTable(ctx, request)
-			if err == errTableNotFound {
+			_, err := r.service.deleteCourse(ctx, request)
+			if err == errCourseNotFound {
 				ceng_router.ReturnNotFoundError(ctx, err)
 				return
 			}
 			// Errors and output handler
 			if err != nil {
-				zap.L().Error("Something went wrong", zap.String("service", "table-router"), zap.Error(err))
+				zap.L().Error("Something went wrong", zap.String("service", "course-router"), zap.Error(err))
 				ceng_router.ReturnGenericError(ctx)
 				return
 			}
 			ceng_router.ReturnNoContent(ctx)
 		})
-
 }

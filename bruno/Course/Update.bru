@@ -1,11 +1,11 @@
 meta {
-  name: My Update
+  name: Update
   type: http
-  seq: 7
+  seq: 4
 }
 
 put {
-  url: http://127.0.0.1:8001/api/v1/tables/{{firstUseCaseId}}
+  url: http://127.0.0.1:8001/api/v1/courses/{{firstCourseId}}
   body: json
   auth: bearer
 }
@@ -16,8 +16,7 @@ auth:bearer {
 
 body:json {
   {
-    "isOpen": false,
-    "paymentMethod": "cash"
+    "position": 1
   }
 }
 

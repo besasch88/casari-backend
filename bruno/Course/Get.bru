@@ -1,17 +1,13 @@
 meta {
-  name: List
+  name: Get
   type: http
   seq: 2
 }
 
 get {
-  url: http://127.0.0.1:8001/api/v1/tables?includeClosed=true
+  url: http://127.0.0.1:8001/api/v1/courses/{{firstCourseId}}
   body: none
   auth: bearer
-}
-
-params:query {
-  includeClosed: true
 }
 
 auth:bearer {
@@ -19,7 +15,7 @@ auth:bearer {
 }
 
 script:post-response {
-  bru.setVar("firstTableId", res.body?.items[0]?.id);
+  bru.setVar("firstCourseId", res.body?.item?.id);
   
 }
 

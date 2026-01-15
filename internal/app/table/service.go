@@ -1,8 +1,10 @@
 package table
 
 import (
+	"slices"
 	"time"
 
+	"github.com/casari-eat-n-go/backend/internal/pkg/ceng_auth"
 	"github.com/casari-eat-n-go/backend/internal/pkg/ceng_db"
 	"github.com/casari-eat-n-go/backend/internal/pkg/ceng_err"
 	"github.com/casari-eat-n-go/backend/internal/pkg/ceng_pubsub"
@@ -35,7 +37,13 @@ func newTableService(storage *gorm.DB, pubSubAgent *ceng_pubsub.PubSubAgent, rep
 }
 
 func (s tableService) listTables(ctx *gin.Context, input ListTablesInputDto) ([]tableEntity, int64, error) {
-	items, totalCount, err := s.repository.listTables(s.storage, input.UserId, input.IncludeClosed, false)
+	requester := ceng_auth.GetAuthenticatedUserFromSession(ctx)
+	userId := ceng_utils.GetOptionalUUIDFromString(&requester.ID)
+	// Check if the user has a permission
+	if slices.Contains(requester.Permissions, ceng_auth.READ_OTHER_TABLES) {
+		userId = nil
+	}
+	items, totalCount, err := s.repository.listTables(s.storage, userId, input.IncludeClosed, false)
 	if err != nil || items == nil {
 		return []tableEntity{}, 0, ceng_err.ErrGeneric
 	}
@@ -43,8 +51,14 @@ func (s tableService) listTables(ctx *gin.Context, input ListTablesInputDto) ([]
 }
 
 func (s tableService) getTableByID(ctx *gin.Context, input getTableInputDto) (tableEntity, error) {
+	requester := ceng_auth.GetAuthenticatedUserFromSession(ctx)
+	userId := ceng_utils.GetOptionalUUIDFromString(&requester.ID)
+	// Check if the user has a permission
+	if slices.Contains(requester.Permissions, ceng_auth.READ_OTHER_TABLES) {
+		userId = nil
+	}
 	tableID := uuid.MustParse(input.ID)
-	item, err := s.repository.getTableByID(s.storage, tableID, input.UserId, false)
+	item, err := s.repository.getTableByID(s.storage, tableID, userId, false)
 	if err != nil {
 		return tableEntity{}, ceng_err.ErrGeneric
 	}
@@ -55,10 +69,12 @@ func (s tableService) getTableByID(ctx *gin.Context, input getTableInputDto) (ta
 }
 
 func (s tableService) createTable(ctx *gin.Context, input createTableInputDto) (tableEntity, error) {
+	requester := ceng_auth.GetAuthenticatedUserFromSession(ctx)
+	userId := ceng_utils.GetOptionalUUIDFromString(&requester.ID)
 	now := time.Now()
 	newTable := tableEntity{
 		ID:            uuid.New(),
-		UserID:        *input.UserId,
+		UserID:        *userId,
 		Name:          input.Name,
 		Close:         ceng_utils.BoolPtr(false),
 		PaymentMethod: nil,
@@ -107,12 +123,18 @@ func (s tableService) createTable(ctx *gin.Context, input createTableInputDto) (
 }
 
 func (s tableService) updateTable(ctx *gin.Context, input updateTableInputDto) (tableEntity, error) {
+	requester := ceng_auth.GetAuthenticatedUserFromSession(ctx)
+	userId := ceng_utils.GetOptionalUUIDFromString(&requester.ID)
+	// Check if the user has a permission
+	if slices.Contains(requester.Permissions, ceng_auth.WRITE_OTHER_TABLES) {
+		userId = nil
+	}
 	now := time.Now()
 	var updatedTable tableEntity
 	eventsToPublish := []ceng_pubsub.EventToPublish{}
 	errTransaction := s.storage.Transaction(func(tx *gorm.DB) error {
 		tableId := uuid.MustParse(input.ID)
-		currentTable, err := s.repository.getTableByID(tx, tableId, input.UserId, true)
+		currentTable, err := s.repository.getTableByID(tx, tableId, userId, true)
 		if err != nil {
 			return ceng_err.ErrGeneric
 		}
@@ -141,7 +163,7 @@ func (s tableService) updateTable(ctx *gin.Context, input updateTableInputDto) (
 		if _, err = s.repository.saveTable(tx, updatedTable, ceng_db.Update); err != nil {
 			return ceng_err.ErrGeneric
 		}
-		if updatedTable, err = s.repository.getTableByID(tx, updatedTable.ID, input.UserId, false); err != nil {
+		if updatedTable, err = s.repository.getTableByID(tx, updatedTable.ID, userId, false); err != nil {
 			return ceng_err.ErrGeneric
 		}
 
@@ -178,12 +200,18 @@ func (s tableService) updateTable(ctx *gin.Context, input updateTableInputDto) (
 }
 
 func (s tableService) deleteTable(ctx *gin.Context, input deleteTableInputDto) (tableEntity, error) {
+	requester := ceng_auth.GetAuthenticatedUserFromSession(ctx)
+	userId := ceng_utils.GetOptionalUUIDFromString(&requester.ID)
+	// Check if the user has a permission
+	if slices.Contains(requester.Permissions, ceng_auth.WRITE_OTHER_TABLES) {
+		userId = nil
+	}
 	var currentTable tableEntity
 	eventsToPublish := []ceng_pubsub.EventToPublish{}
 	errTransaction := s.storage.Transaction(func(tx *gorm.DB) error {
 		// Check if the Menu Item exists
 		tableId := uuid.MustParse(input.ID)
-		currentTable, err := s.repository.getTableByID(tx, tableId, input.UserId, true)
+		currentTable, err := s.repository.getTableByID(tx, tableId, userId, true)
 		if err != nil {
 			return ceng_err.ErrGeneric
 		}

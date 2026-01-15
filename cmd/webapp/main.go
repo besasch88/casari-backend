@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/casari-eat-n-go/backend/internal/app/auth"
+	"github.com/casari-eat-n-go/backend/internal/app/course"
 	"github.com/casari-eat-n-go/backend/internal/app/healthCheck"
 	"github.com/casari-eat-n-go/backend/internal/app/menu"
 	"github.com/casari-eat-n-go/backend/internal/app/menuCategory"
@@ -97,6 +98,7 @@ func main() {
 	menuOption.Init(envs, dbConnection, pubSubAgent, v1Api)
 	menu.Init(envs, dbConnection, pubSubAgent, v1Api)
 	table.Init(envs, dbConnection, pubSubAgent, v1Api)
+	course.Init(envs, dbConnection, pubSubAgent, v1Api)
 
 	// Start the scheduler
 	if err := scheduler.Init(); err != nil {

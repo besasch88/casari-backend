@@ -55,11 +55,20 @@ type MenuOptionEventEntity struct {
 }
 
 type TableEventEntity struct {
-	ID            uuid.UUID      `json:"id"`
-	UserID        uuid.UUID      `json:"userId"`
-	Name          string         `json:"name"`
-	Close         *bool          `json:"close"`
-	PaymentMethod *PaymentMethod `json:"paymentMethod"`
-	CreatedAt     time.Time      `json:"createdAt"`
-	UpdatedAt     time.Time      `json:"updatedAt"`
+	ID            uuid.UUID `json:"id"`
+	UserID        uuid.UUID `json:"userId"`
+	Name          string    `json:"name"`
+	Close         *bool     `json:"close"`
+	PaymentMethod *string   `json:"paymentMethod"`
+	CreatedAt     time.Time `json:"createdAt"`
+	UpdatedAt     time.Time `json:"updatedAt"`
+}
+
+type CourseEventEntity struct {
+	ID        uuid.UUID `json:"id"`
+	UserID    uuid.UUID `json:"userId"`
+	TableID   uuid.UUID `json:"tableId"`
+	Close     *bool     `json:"close"`
+	CreatedAt time.Time `json:"createdAt"`
+	UpdatedAt time.Time `json:"updatedAt"`
 }

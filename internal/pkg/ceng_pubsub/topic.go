@@ -16,4 +16,5 @@ const (
 	TopicMenuItemV1     PubSubTopic = "topic/v1/menu-item"
 	TopicMenuOptionV1   PubSubTopic = "topic/v1/menu-option"
 	TopicTableV1        PubSubTopic = "topic/v1/table"
+	TopicCourseV1       PubSubTopic = "topic/v1/course"
 )
