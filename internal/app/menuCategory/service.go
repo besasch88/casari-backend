@@ -56,6 +56,14 @@ func (s menuCategoryService) getMenuCategoryByID(ctx *gin.Context, input getMenu
 }
 
 func (s menuCategoryService) createMenuCategory(ctx *gin.Context, input createMenuCategoryInputDto) (menuCategoryEntity, error) {
+	if input.PrinterID != nil {
+		printerId := uuid.MustParse(*input.PrinterID)
+		if exists, err := s.repository.checkPrinterExists(s.storage, printerId); err != nil {
+			return menuCategoryEntity{}, ceng_err.ErrGeneric
+		} else if !exists {
+			return menuCategoryEntity{}, errPrinterNotFound
+		}
+	}
 	now := time.Now()
 	maxValue := int64(math.MaxInt64)
 	newMenuCategory := menuCategoryEntity{
@@ -63,6 +71,7 @@ func (s menuCategoryService) createMenuCategory(ctx *gin.Context, input createMe
 		Title:     input.Title,
 		Position:  maxValue,
 		Active:    ceng_utils.BoolPtr(false),
+		PrinterID: ceng_utils.GetOptionalUUIDFromString(input.PrinterID),
 		CreatedAt: now,
 		UpdatedAt: now,
 	}
@@ -91,6 +100,7 @@ func (s menuCategoryService) createMenuCategory(ctx *gin.Context, input createMe
 					Title:     newMenuCategory.Title,
 					Position:  newMenuCategory.Position,
 					Active:    newMenuCategory.Active,
+					PrinterID: newMenuCategory.PrinterID,
 					CreatedAt: newMenuCategory.CreatedAt,
 					UpdatedAt: newMenuCategory.UpdatedAt,
 				},
@@ -116,6 +126,7 @@ func (s menuCategoryService) createMenuCategory(ctx *gin.Context, input createMe
 						Title:     updatedEntity.Title,
 						Position:  updatedEntity.Position,
 						Active:    updatedEntity.Active,
+						PrinterID: updatedEntity.PrinterID,
 						CreatedAt: updatedEntity.CreatedAt,
 						UpdatedAt: updatedEntity.UpdatedAt,
 					},
@@ -196,6 +207,7 @@ func (s menuCategoryService) updateMenuCategory(ctx *gin.Context, input updateMe
 					Title:     updatedMenuCategory.Title,
 					Position:  updatedMenuCategory.Position,
 					Active:    updatedMenuCategory.Active,
+					PrinterID: updatedMenuCategory.PrinterID,
 					CreatedAt: updatedMenuCategory.CreatedAt,
 					UpdatedAt: updatedMenuCategory.UpdatedAt,
 				},
@@ -221,6 +233,7 @@ func (s menuCategoryService) updateMenuCategory(ctx *gin.Context, input updateMe
 						Title:     updatedEntity.Title,
 						Position:  updatedEntity.Position,
 						Active:    updatedEntity.Active,
+						PrinterID: updatedEntity.PrinterID,
 						CreatedAt: updatedEntity.CreatedAt,
 						UpdatedAt: updatedEntity.UpdatedAt,
 					},
@@ -273,6 +286,7 @@ func (s menuCategoryService) deleteMenuCategory(ctx *gin.Context, input deleteMe
 					Title:     currentMenuCategory.Title,
 					Position:  currentMenuCategory.Position,
 					Active:    currentMenuCategory.Active,
+					PrinterID: currentMenuCategory.PrinterID,
 					CreatedAt: currentMenuCategory.CreatedAt,
 					UpdatedAt: currentMenuCategory.UpdatedAt,
 				},
@@ -295,6 +309,7 @@ func (s menuCategoryService) deleteMenuCategory(ctx *gin.Context, input deleteMe
 						Title:     updatedEntity.Title,
 						Position:  updatedEntity.Position,
 						Active:    updatedEntity.Active,
+						PrinterID: updatedEntity.PrinterID,
 						CreatedAt: updatedEntity.CreatedAt,
 						UpdatedAt: updatedEntity.UpdatedAt,
 					},

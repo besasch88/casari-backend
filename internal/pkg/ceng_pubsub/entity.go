@@ -13,13 +13,23 @@ const (
 	PaymentCard PaymentMethod = "card"
 )
 
-type MenuCategoryEventEntity struct {
+type PrinterEventEntity struct {
 	ID        uuid.UUID `json:"id"`
 	Title     string    `json:"title"`
-	Position  int64     `json:"position"`
+	Url       string    `json:"url"`
 	Active    *bool     `json:"active"`
 	CreatedAt time.Time `json:"createdAt"`
 	UpdatedAt time.Time `json:"updatedAt"`
+}
+
+type MenuCategoryEventEntity struct {
+	ID        uuid.UUID  `json:"id"`
+	Title     string     `json:"title"`
+	Position  int64      `json:"position"`
+	Active    *bool      `json:"active"`
+	PrinterID *uuid.UUID `json:"printerId"`
+	CreatedAt time.Time  `json:"createdAt"`
+	UpdatedAt time.Time  `json:"updatedAt"`
 }
 
 type MenuItemEventEntity struct {

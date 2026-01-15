@@ -5,7 +5,7 @@ meta {
 }
 
 post {
-  url: http://127.0.0.1:8001/api/v1/menu/categories
+  url: http://127.0.0.1:8001/api/v1/printers
   body: json
   auth: bearer
 }
@@ -16,13 +16,13 @@ auth:bearer {
 
 body:json {
   {
-    "title": "Primi",
-    "printerId": "1a6f3452-f409-4611-a7f0-230df0357e74"
+    "title": "Bar",
+    "url":"http://192.168.1.26:9100"
   }
 }
 
 script:post-response {
-  bru.setVar("firstMenuCategoryId", res.body?.item?.id);
+  bru.setVar("firstPrinterId", res.body?.item?.id);
   
 }
 

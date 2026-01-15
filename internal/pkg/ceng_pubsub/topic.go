@@ -11,6 +11,7 @@ type PubSubTopic string
 List of available topics.
 */
 const (
+	TopicPrinterV1      PubSubTopic = "topic/v1/printer"
 	TopicMenuCategoryV1 PubSubTopic = "topic/v1/menu-category"
 	TopicMenuItemV1     PubSubTopic = "topic/v1/menu-item"
 	TopicMenuOptionV1   PubSubTopic = "topic/v1/menu-option"

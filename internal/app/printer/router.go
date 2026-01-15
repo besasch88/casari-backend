@@ -1,4 +1,4 @@
-package menuCategory
+package printer
 
 import (
 	"time"
@@ -11,32 +11,32 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type menuCategoryRouterInterface interface {
+type printerRouterInterface interface {
 	register(engine *gin.RouterGroup)
 }
 
-type menuCategoryRouter struct {
-	service menuCategoryServiceInterface
+type printerRouter struct {
+	service printerServiceInterface
 }
 
-func newMenuCategoryRouter(service menuCategoryServiceInterface) menuCategoryRouter {
-	return menuCategoryRouter{
+func newPrinterRouter(service printerServiceInterface) printerRouter {
+	return printerRouter{
 		service: service,
 	}
 }
 
 // Implementation
-func (r menuCategoryRouter) register(router *gin.RouterGroup) {
+func (r printerRouter) register(router *gin.RouterGroup) {
 	router.GET(
-		"/menu/categories",
-		ceng_auth.AuthMiddleware([]string{ceng_auth.READ_MENU}),
+		"/printers",
+		ceng_auth.AuthMiddleware([]string{ceng_auth.READ_PRINTER}),
 		ceng_timeout.TimeoutMiddleware(time.Duration(1)*time.Second),
 		func(ctx *gin.Context) {
 			// Business Logic
-			items, totalCount, err := r.service.listMenuCategories(ctx)
+			items, totalCount, err := r.service.listPrinters(ctx)
 			// Errors and output handler
 			if err != nil {
-				zap.L().Error("Something went wrong", zap.String("service", "menu-category-router"), zap.Error(err))
+				zap.L().Error("Something went wrong", zap.String("service", "printer-router"), zap.Error(err))
 				ceng_router.ReturnGenericError(ctx)
 				return
 			}
@@ -44,12 +44,12 @@ func (r menuCategoryRouter) register(router *gin.RouterGroup) {
 		})
 
 	router.POST(
-		"/menu/categories",
-		ceng_auth.AuthMiddleware([]string{ceng_auth.READ_MENU, ceng_auth.WRITE_MENU}),
+		"/printers",
+		ceng_auth.AuthMiddleware([]string{ceng_auth.READ_PRINTER, ceng_auth.WRITE_PRINTER}),
 		ceng_timeout.TimeoutMiddleware(time.Duration(1)*time.Second),
 		func(ctx *gin.Context) {
 			// Input validation
-			var request createMenuCategoryInputDto
+			var request createPrinterInputDto
 			if err := ceng_router.BindParameters(ctx, &request); err != nil {
 				ceng_router.ReturnValidationError(ctx, err)
 				return
@@ -59,18 +59,14 @@ func (r menuCategoryRouter) register(router *gin.RouterGroup) {
 				return
 			}
 			// Business Logic
-			item, err := r.service.createMenuCategory(ctx, request)
-			if err == errMenuCategorySameTitleAlreadyExists {
+			item, err := r.service.createPrinter(ctx, request)
+			if err == errPrinterSameTitleAlreadyExists {
 				ceng_router.ReturnBadRequestError(ctx, err)
-				return
-			}
-			if err == errPrinterNotFound {
-				ceng_router.ReturnNotFoundError(ctx, err)
 				return
 			}
 			// Errors and output handler
 			if err != nil {
-				zap.L().Error("Something went wrong", zap.String("service", "menu-category-router"), zap.Error(err))
+				zap.L().Error("Something went wrong", zap.String("service", "printer-router"), zap.Error(err))
 				ceng_router.ReturnGenericError(ctx)
 				return
 			}
@@ -78,12 +74,12 @@ func (r menuCategoryRouter) register(router *gin.RouterGroup) {
 		})
 
 	router.GET(
-		"/menu/categories/:menuCategoryId",
-		ceng_auth.AuthMiddleware([]string{ceng_auth.READ_MENU}),
+		"/printers/:printerId",
+		ceng_auth.AuthMiddleware([]string{ceng_auth.READ_PRINTER}),
 		ceng_timeout.TimeoutMiddleware(time.Duration(1)*time.Second),
 		func(ctx *gin.Context) {
 			// Input validation
-			var request getMenuCategoryInputDto
+			var request getPrinterInputDto
 			if err := ceng_router.BindParameters(ctx, &request); err != nil {
 				ceng_router.ReturnValidationError(ctx, err)
 				return
@@ -93,14 +89,14 @@ func (r menuCategoryRouter) register(router *gin.RouterGroup) {
 				return
 			}
 			// Business Logic
-			item, err := r.service.getMenuCategoryByID(ctx, request)
-			if err == errMenuCategoryNotFound {
+			item, err := r.service.getPrinterByID(ctx, request)
+			if err == errPrinterNotFound {
 				ceng_router.ReturnNotFoundError(ctx, err)
 				return
 			}
 			// Errors and output handler
 			if err != nil {
-				zap.L().Error("Something went wrong", zap.String("service", "menu-category-router"), zap.Error(err))
+				zap.L().Error("Something went wrong", zap.String("service", "printer-router"), zap.Error(err))
 				ceng_router.ReturnGenericError(ctx)
 				return
 			}
@@ -108,12 +104,12 @@ func (r menuCategoryRouter) register(router *gin.RouterGroup) {
 		})
 
 	router.PUT(
-		"/menu/categories/:menuCategoryId",
-		ceng_auth.AuthMiddleware([]string{ceng_auth.READ_MENU, ceng_auth.WRITE_MENU}),
+		"/printers/:printerId",
+		ceng_auth.AuthMiddleware([]string{ceng_auth.READ_PRINTER, ceng_auth.WRITE_PRINTER}),
 		ceng_timeout.TimeoutMiddleware(time.Duration(1)*time.Second),
 		func(ctx *gin.Context) {
 			// Input validation
-			var request updateMenuCategoryInputDto
+			var request updatePrinterInputDto
 			if err := ceng_router.BindParameters(ctx, &request); err != nil {
 				ceng_router.ReturnValidationError(ctx, err)
 				return
@@ -123,18 +119,18 @@ func (r menuCategoryRouter) register(router *gin.RouterGroup) {
 				return
 			}
 			// Business Logic
-			item, err := r.service.updateMenuCategory(ctx, request)
-			if err == errMenuCategoryNotFound {
+			item, err := r.service.updatePrinter(ctx, request)
+			if err == errPrinterNotFound {
 				ceng_router.ReturnNotFoundError(ctx, err)
 				return
 			}
-			if err == errMenuCategorySameTitleAlreadyExists {
+			if err == errPrinterSameTitleAlreadyExists {
 				ceng_router.ReturnBadRequestError(ctx, err)
 				return
 			}
 			// Errors and output handler
 			if err != nil {
-				zap.L().Error("Something went wrong", zap.String("service", "menu-category-router"), zap.Error(err))
+				zap.L().Error("Something went wrong", zap.String("service", "printer-router"), zap.Error(err))
 				ceng_router.ReturnGenericError(ctx)
 				return
 			}
@@ -142,12 +138,12 @@ func (r menuCategoryRouter) register(router *gin.RouterGroup) {
 		})
 
 	router.DELETE(
-		"/menu/categories/:menuCategoryId",
-		ceng_auth.AuthMiddleware([]string{ceng_auth.READ_MENU, ceng_auth.WRITE_MENU}),
+		"/printers/:printerId",
+		ceng_auth.AuthMiddleware([]string{ceng_auth.READ_PRINTER, ceng_auth.WRITE_PRINTER}),
 		ceng_timeout.TimeoutMiddleware(time.Duration(1)*time.Second),
 		func(ctx *gin.Context) {
 			// Input validation
-			var request deleteMenuCategoryInputDto
+			var request deletePrinterInputDto
 			if err := ceng_router.BindParameters(ctx, &request); err != nil {
 				ceng_router.ReturnValidationError(ctx, err)
 				return
@@ -157,14 +153,14 @@ func (r menuCategoryRouter) register(router *gin.RouterGroup) {
 				return
 			}
 			// Business Logic
-			_, err := r.service.deleteMenuCategory(ctx, request)
-			if err == errMenuCategoryNotFound {
+			_, err := r.service.deletePrinter(ctx, request)
+			if err == errPrinterNotFound {
 				ceng_router.ReturnNotFoundError(ctx, err)
 				return
 			}
 			// Errors and output handler
 			if err != nil {
-				zap.L().Error("Something went wrong", zap.String("service", "menu-category-router"), zap.Error(err))
+				zap.L().Error("Something went wrong", zap.String("service", "printer-router"), zap.Error(err))
 				ceng_router.ReturnGenericError(ctx)
 				return
 			}

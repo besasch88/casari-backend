@@ -19,6 +19,9 @@ type PubSubEventType string
 List of avaiable events can be published and consumed within the pub-sub system.
 */
 const (
+	PrinterCreatedEvent      PubSubEventType = "printer.created"
+	PrinterUpdatedEvent      PubSubEventType = "printer.updated"
+	PrinterDeletedEvent      PubSubEventType = "printer.deleted"
 	MenuCategoryCreatedEvent PubSubEventType = "menu-category.created"
 	MenuCategoryUpdatedEvent PubSubEventType = "menu-category.updated"
 	MenuCategoryDeletedEvent PubSubEventType = "menu-category.deleted"
@@ -38,6 +41,9 @@ Map each event type to a function that returns a pointer to the right struct.
 It is useful for unmarshal stored events and replay
 */
 var eventEntityFactories = map[PubSubEventType]func() any{
+	PrinterCreatedEvent:      func() interface{} { return &PrinterEventEntity{} },
+	PrinterUpdatedEvent:      func() interface{} { return &PrinterEventEntity{} },
+	PrinterDeletedEvent:      func() interface{} { return &PrinterEventEntity{} },
 	MenuCategoryCreatedEvent: func() interface{} { return &MenuCategoryEventEntity{} },
 	MenuCategoryUpdatedEvent: func() interface{} { return &MenuCategoryEventEntity{} },
 	MenuCategoryDeletedEvent: func() interface{} { return &MenuCategoryEventEntity{} },

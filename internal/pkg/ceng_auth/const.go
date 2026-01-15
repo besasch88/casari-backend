@@ -22,6 +22,8 @@ List of permissions we can leverage to evaluate if an authenticated user can per
 before performing the API logic.
 */
 const (
+	READ_PRINTER         = "read-printer"
+	WRITE_PRINTER        = "write-printer"
 	READ_MENU            = "read-menu"
 	WRITE_MENU           = "write-menu"
 	READ_MY_TABLES       = "read-my-tables"

@@ -11,6 +11,7 @@ import (
 	"github.com/casari-eat-n-go/backend/internal/app/menuCategory"
 	"github.com/casari-eat-n-go/backend/internal/app/menuItem"
 	"github.com/casari-eat-n-go/backend/internal/app/menuOption"
+	"github.com/casari-eat-n-go/backend/internal/app/printer"
 	"github.com/casari-eat-n-go/backend/internal/app/table"
 	"github.com/casari-eat-n-go/backend/internal/pkg/ceng_db"
 	"github.com/casari-eat-n-go/backend/internal/pkg/ceng_env"
@@ -65,6 +66,7 @@ func main() {
 	v1Api := r.Group("cli")
 	healthCheck.Init(envs, dbConnection, v1Api)
 	auth.Init(envs, dbConnection, scheduler, v1Api)
+	printer.Init(envs, dbConnection, pubSubAgent, v1Api)
 	menuCategory.Init(envs, dbConnection, pubSubAgent, v1Api)
 	menuItem.Init(envs, dbConnection, pubSubAgent, v1Api)
 	menuOption.Init(envs, dbConnection, pubSubAgent, v1Api)
