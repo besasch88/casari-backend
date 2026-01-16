@@ -46,7 +46,7 @@ func (r tableRepository) listTables(tx *gorm.DB, userId *uuid.UUID, includeClose
 	if forUpdate {
 		query.Clauses(clause.Locking{Strength: "UPDATE"})
 	}
-	order = fmt.Sprintf("%s %s", "created_at", ceng_db.Asc)
+	order = fmt.Sprintf("%s %s, %s %s", "close", ceng_db.Asc, "created_at", ceng_db.Desc)
 	result := query.Order(order).Find(&models)
 	queryCount.Count(&totalCount)
 

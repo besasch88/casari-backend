@@ -82,6 +82,7 @@ func (u authUtil) generateToken(user authUserEntity) (authTokenEntity, error) {
 
 	// Return generated tokens
 	return authTokenEntity{
+		UserId:                user.ID.String(),
 		AccessToken:           accessTokenStr,
 		RefreshToken:          refreshTokenStr,
 		AccessTokenID:         accessTokenID,

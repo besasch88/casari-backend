@@ -23,6 +23,7 @@ type authSessionEntity struct {
 }
 
 type authTokenEntity struct {
+	UserId                string    `json:"userId"`
 	AccessToken           string    `json:"accessToken"`
 	RefreshToken          string    `json:"refreshToken"`
 	AccessTokenID         uuid.UUID `json:"-"`

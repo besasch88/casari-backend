@@ -29,7 +29,7 @@ func newTableRouter(service tableServiceInterface) tableRouter {
 func (r tableRouter) register(router *gin.RouterGroup) {
 	router.GET(
 		"/tables",
-		ceng_auth.AuthMiddleware([]string{ceng_auth.READ_OTHER_TABLES}),
+		ceng_auth.AuthMiddleware([]string{ceng_auth.READ_MY_TABLES}),
 		ceng_timeout.TimeoutMiddleware(time.Duration(1)*time.Second),
 		func(ctx *gin.Context) {
 			// Input validation
@@ -86,7 +86,7 @@ func (r tableRouter) register(router *gin.RouterGroup) {
 
 	router.GET(
 		"/tables/:tableId",
-		ceng_auth.AuthMiddleware([]string{ceng_auth.READ_OTHER_TABLES}),
+		ceng_auth.AuthMiddleware([]string{ceng_auth.READ_MY_TABLES}),
 		ceng_timeout.TimeoutMiddleware(time.Duration(1)*time.Second),
 		func(ctx *gin.Context) {
 			// Input validation
@@ -116,7 +116,7 @@ func (r tableRouter) register(router *gin.RouterGroup) {
 
 	router.PUT(
 		"/tables/:tableId",
-		ceng_auth.AuthMiddleware([]string{ceng_auth.READ_OTHER_TABLES, ceng_auth.WRITE_OTHER_TABLES}),
+		ceng_auth.AuthMiddleware([]string{ceng_auth.READ_MY_TABLES, ceng_auth.WRITE_MY_TABLES}),
 		ceng_timeout.TimeoutMiddleware(time.Duration(1)*time.Second),
 		func(ctx *gin.Context) {
 			// Input validation
@@ -150,7 +150,7 @@ func (r tableRouter) register(router *gin.RouterGroup) {
 
 	router.DELETE(
 		"/tables/:tableId",
-		ceng_auth.AuthMiddleware([]string{ceng_auth.READ_OTHER_TABLES, ceng_auth.WRITE_OTHER_TABLES}),
+		ceng_auth.AuthMiddleware([]string{ceng_auth.READ_MY_TABLES, ceng_auth.WRITE_MY_TABLES}),
 		ceng_timeout.TimeoutMiddleware(time.Duration(1)*time.Second),
 		func(ctx *gin.Context) {
 			// Input validation
