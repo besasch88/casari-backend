@@ -43,9 +43,6 @@ func (s menuService) getMenu(ctx *gin.Context) (menu, error) {
 		Categories: []menuCategory{},
 	}
 	for _, category := range categories {
-		if !*category.Active {
-			continue
-		}
 		menuCategory := menuCategory{
 			menuCategoryEntity: category,
 			Items:              []menuItem{},
@@ -55,16 +52,10 @@ func (s menuService) getMenu(ctx *gin.Context) (menu, error) {
 				menuItemEntity: item,
 				Options:        []menuOption{},
 			}
-			if !*item.Active {
-				continue
-			}
 			if item.MenuCategoryID.String() != category.ID.String() {
 				continue
 			}
 			for _, option := range options {
-				if !*option.Active {
-					continue
-				}
 				if option.MenuItemID.String() != item.ID.String() {
 					continue
 				}
