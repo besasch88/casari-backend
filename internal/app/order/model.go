@@ -62,3 +62,22 @@ func (m courseSelectionModel) TableName() string {
 func (m courseSelectionModel) toEntity() courseSelectionEntity {
 	return courseSelectionEntity(m)
 }
+
+type OrderDetailModel struct {
+	TableName       string    `gorm:"column:table_name"`
+	TableCreatedAt  time.Time `gorm:"column:table_created_at"`
+	PrinterId       string    `gorm:"column:printer_id"`
+	PrinterTitle    string    `gorm:"column:printer_title"`
+	PrinterURL      string    `gorm:"column:printer_url"`
+	CourseID        string    `gorm:"column:course_id"`
+	CourseNumber    int64     `gorm:"column:course_number"`
+	MenuItemTitle   string    `gorm:"column:menu_item_title"`
+	MenuItemPrice   int64     `gorm:"column:menu_item_price"`
+	MenuOptionTitle *string   `gorm:"column:menu_option_title"`
+	MenuOptionPrice *int64    `gorm:"column:menu_option_price"`
+	Quantity        int64     `gorm:"column:quantity"`
+}
+
+func (m OrderDetailModel) toEntity() OrderDetailEntity {
+	return OrderDetailEntity(m)
+}

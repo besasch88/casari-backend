@@ -1,6 +1,8 @@
 package order
 
 import (
+	"time"
+
 	"github.com/casari-eat-n-go/backend/internal/pkg/ceng_pubsub"
 )
 
@@ -16,4 +18,19 @@ type courseEntityWithChilds struct {
 type orderEntityWithChilds struct {
 	orderEntity
 	Courses []courseEntityWithChilds `json:"courses"`
+}
+
+type OrderDetailEntity struct {
+	TableName       string
+	TableCreatedAt  time.Time
+	PrinterId       string
+	PrinterTitle    string
+	PrinterURL      string
+	CourseID        string
+	CourseNumber    int64
+	MenuItemTitle   string
+	MenuItemPrice   int64
+	MenuOptionTitle *string
+	MenuOptionPrice *int64
+	Quantity        int64
 }

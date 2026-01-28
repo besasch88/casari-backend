@@ -19,6 +19,9 @@ type orderRepositoryInterface interface {
 	saveCourse(tx *gorm.DB, course courseEntity, operation ceng_db.SaveOperation) (courseEntity, error)
 	saveSelection(tx *gorm.DB, selection courseSelectionEntity, operation ceng_db.SaveOperation) (courseSelectionEntity, error)
 	deleteSelectionsByCourseID(tx *gorm.DB, courseID uuid.UUID) error
+	getOrderDetailByTableID(tx *gorm.DB, tableID uuid.UUID) ([]OrderDetailEntity, error)
+	getOrderDetailByTableIDAndCourseID(tx *gorm.DB, tableID uuid.UUID, courseID uuid.UUID) ([]OrderDetailEntity, error)
+	getPricedOrderByTableID(tx *gorm.DB, tableID uuid.UUID) ([]OrderDetailEntity, error)
 }
 
 type orderRepository struct {
@@ -167,4 +170,45 @@ func (r orderRepository) saveSelection(tx *gorm.DB, selection courseSelectionEnt
 func (r orderRepository) deleteSelectionsByCourseID(tx *gorm.DB, courseID uuid.UUID) error {
 	err := tx.Where("course_id = ?", courseID).Delete(&courseSelectionModel{}).Error
 	return err
+}
+
+func (r orderRepository) getOrderDetailByTableID(tx *gorm.DB, tableID uuid.UUID) ([]OrderDetailEntity, error) {
+	var models []OrderDetailModel
+	err := tx.Raw(GetOrderByTableQuery, tableID).Scan(&models).Error
+	if err != nil {
+		return []OrderDetailEntity{}, err
+	}
+	var entities []OrderDetailEntity = []OrderDetailEntity{}
+	for _, model := range models {
+		entity := model.toEntity()
+		entities = append(entities, entity)
+	}
+	return entities, nil
+}
+func (r orderRepository) getOrderDetailByTableIDAndCourseID(tx *gorm.DB, tableID uuid.UUID, courseID uuid.UUID) ([]OrderDetailEntity, error) {
+	var models []OrderDetailModel
+	err := tx.Raw(getCourseByTableAndCourseQuery, tableID, courseID).Scan(&models).Error
+	if err != nil {
+		return []OrderDetailEntity{}, err
+	}
+	var entities []OrderDetailEntity = []OrderDetailEntity{}
+	for _, model := range models {
+		entity := model.toEntity()
+		entities = append(entities, entity)
+	}
+	return entities, nil
+}
+
+func (r orderRepository) getPricedOrderByTableID(tx *gorm.DB, tableID uuid.UUID) ([]OrderDetailEntity, error) {
+	var models []OrderDetailModel
+	err := tx.Raw(GetPricedOrderByTableQuery, tableID).Scan(&models).Error
+	if err != nil {
+		return []OrderDetailEntity{}, err
+	}
+	var entities []OrderDetailEntity = []OrderDetailEntity{}
+	for _, model := range models {
+		entity := model.toEntity()
+		entities = append(entities, entity)
+	}
+	return entities, nil
 }

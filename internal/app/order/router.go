@@ -117,6 +117,12 @@ func (r orderRouter) register(router *gin.RouterGroup) {
 				ceng_router.ReturnValidationError(ctx, err)
 				return
 			}
+			err := r.printService.print(ctx, request)
+			if err != nil {
+				zap.L().Error("Something went wrong", zap.String("service", "order-router"), zap.Error(err))
+				ceng_router.ReturnGenericError(ctx)
+				return
+			}
 			ceng_router.ReturnOk(ctx, &gin.H{"success": true})
 		})
 

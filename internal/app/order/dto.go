@@ -60,13 +60,15 @@ func (r updateOrderInputDto) validate() error {
 }
 
 type printOrderInputDto struct {
-	TableID string `uri:"tableId"`
-	Target  string `json:"target"`
+	TableID  string  `uri:"tableId"`
+	CourseID *string `json:"courseId"`
+	Target   string  `json:"target"`
 }
 
 func (r printOrderInputDto) validate() error {
 	return validation.ValidateStruct(&r,
 		validation.Field(&r.TableID, validation.Required, is.UUID),
+		validation.Field(&r.CourseID, is.UUID, validation.NilOrNotEmpty, validation.When(r.Target == "course", validation.Required)),
 		validation.Field(&r.Target, validation.Required, validation.In("order", "course", "bill")),
 	)
 }
