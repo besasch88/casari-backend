@@ -34,9 +34,10 @@ const (
 	TableCreatedEvent        PubSubEventType = "table.created"
 	TableUpdatedEvent        PubSubEventType = "table.updated"
 	TableDeletedEvent        PubSubEventType = "table.deleted"
+	OrderCreatedEvent        PubSubEventType = "order.created"
+	OrderUpdatedEvent        PubSubEventType = "order.updated"
 	CourseCreatedEvent       PubSubEventType = "course.created"
 	CourseUpdatedEvent       PubSubEventType = "course.updated"
-	CourseDeletedEvent       PubSubEventType = "course.deleted"
 )
 
 /*
@@ -59,9 +60,10 @@ var eventEntityFactories = map[PubSubEventType]func() any{
 	TableCreatedEvent:        func() interface{} { return &TableEventEntity{} },
 	TableUpdatedEvent:        func() interface{} { return &TableEventEntity{} },
 	TableDeletedEvent:        func() interface{} { return &TableEventEntity{} },
+	OrderCreatedEvent:        func() interface{} { return &OrderEventEntity{} },
+	OrderUpdatedEvent:        func() interface{} { return &OrderEventEntity{} },
 	CourseCreatedEvent:       func() interface{} { return &CourseEventEntity{} },
 	CourseUpdatedEvent:       func() interface{} { return &CourseEventEntity{} },
-	CourseDeletedEvent:       func() interface{} { return &CourseEventEntity{} },
 }
 
 /*

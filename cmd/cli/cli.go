@@ -6,12 +6,12 @@ import (
 
 	"github.com/casari-eat-n-go/backend/cmd/cli/commands"
 	"github.com/casari-eat-n-go/backend/internal/app/auth"
-	"github.com/casari-eat-n-go/backend/internal/app/course"
 	"github.com/casari-eat-n-go/backend/internal/app/healthCheck"
 	"github.com/casari-eat-n-go/backend/internal/app/menu"
 	"github.com/casari-eat-n-go/backend/internal/app/menuCategory"
 	"github.com/casari-eat-n-go/backend/internal/app/menuItem"
 	"github.com/casari-eat-n-go/backend/internal/app/menuOption"
+	"github.com/casari-eat-n-go/backend/internal/app/order"
 	"github.com/casari-eat-n-go/backend/internal/app/printer"
 	"github.com/casari-eat-n-go/backend/internal/app/table"
 	"github.com/casari-eat-n-go/backend/internal/pkg/ceng_db"
@@ -73,7 +73,7 @@ func main() {
 	menuOption.Init(envs, dbConnection, pubSubAgent, v1Api)
 	menu.Init(envs, dbConnection, pubSubAgent, v1Api)
 	table.Init(envs, dbConnection, pubSubAgent, v1Api)
-	course.Init(envs, dbConnection, pubSubAgent, v1Api)
+	order.Init(envs, dbConnection, pubSubAgent, v1Api)
 
 	// Create CLI app
 	app := cli.NewApp()

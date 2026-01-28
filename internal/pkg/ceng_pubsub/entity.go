@@ -64,11 +64,27 @@ type TableEventEntity struct {
 	UpdatedAt     time.Time `json:"updatedAt"`
 }
 
-type CourseEventEntity struct {
+type OrderEventEntity struct {
 	ID        uuid.UUID `json:"id"`
-	UserID    uuid.UUID `json:"userId"`
 	TableID   uuid.UUID `json:"tableId"`
-	Close     *bool     `json:"close"`
 	CreatedAt time.Time `json:"createdAt"`
 	UpdatedAt time.Time `json:"updatedAt"`
+}
+
+type CourseEventEntity struct {
+	ID        uuid.UUID `json:"id"`
+	OrderID   uuid.UUID `json:"orderId"`
+	Position  int64     `json:"position"`
+	CreatedAt time.Time `json:"createdAt"`
+	UpdatedAt time.Time `json:"updatedAt"`
+}
+
+type CourseSelectionEventEntity struct {
+	ID           uuid.UUID  `json:"id"`
+	CourseID     uuid.UUID  `json:"courseId"`
+	MenuItemID   uuid.UUID  `json:"menuItemId"`
+	MenuOptionID *uuid.UUID `json:"menuOptionId"`
+	Quantity     int64      `json:"quantity"`
+	CreatedAt    time.Time  `json:"createdAt"`
+	UpdatedAt    time.Time  `json:"updatedAt"`
 }
