@@ -69,6 +69,6 @@ func (r printOrderInputDto) validate() error {
 	return validation.ValidateStruct(&r,
 		validation.Field(&r.TableID, validation.Required, is.UUID),
 		validation.Field(&r.CourseID, is.UUID, validation.NilOrNotEmpty, validation.When(r.Target == "course", validation.Required)),
-		validation.Field(&r.Target, validation.Required, validation.In("order", "course", "bill")),
+		validation.Field(&r.Target, validation.Required, validation.In("order", "course", "bill", "payment")),
 	)
 }

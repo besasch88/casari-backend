@@ -4,6 +4,7 @@ import (
 	"net"
 
 	"github.com/casari-eat-n-go/backend/internal/pkg/ceng_pubsub"
+	"github.com/casari-eat-n-go/backend/internal/pkg/ceng_utils"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/hennedo/escpos"
@@ -38,6 +39,9 @@ func (s printService) print(ctx *gin.Context, input printOrderInputDto) error {
 		return s.printCourse(uuid.MustParse(input.TableID), uuid.MustParse(*input.CourseID))
 	case "bill":
 		return s.printBill(uuid.MustParse(input.TableID))
+	case "payment":
+		return s.printPayment(uuid.MustParse(input.TableID))
+
 	default:
 		return errInvalidPrintRequest
 	}
@@ -92,6 +96,31 @@ func (s printService) printBill(tableId uuid.UUID) error {
 	}
 	s.printRepository.printLine(printer)
 	s.printRepository.printTotalPrice(printer, total)
+	s.printRepository.printLine(printer)
+	s.printRepository.printRecipeCollection(printer)
+	s.printRepository.printAndCut(printer)
+	return nil
+}
+
+func (s printService) printPayment(tableId uuid.UUID) error {
+	item, err := s.repository.getTotalPriceAndPaymentByTableID(s.storage, tableId)
+	if err != nil {
+		return err
+	}
+	if ceng_utils.IsEmpty(item) {
+		return nil
+	}
+	conn, err := net.Dial("tcp", item.PrinterURL)
+	if err != nil {
+		return err
+	}
+	defer conn.Close()
+	printer := escpos.New(conn)
+	s.printRepository.printTable(printer, item.TableName)
+	s.printRepository.printPrinterName(printer, item.PrinterTitle)
+	s.printRepository.printTableCreation(printer, item.TableCreatedAt)
+	s.printRepository.printLine(printer)
+	s.printRepository.printPaymentMethod(printer, item.TablePayment, item.PriceTotal)
 	s.printRepository.printAndCut(printer)
 	return nil
 }

@@ -19,6 +19,8 @@ type printRepositoryInterface interface {
 	printItem(printer *escpos.Escpos, quantity int64, name string) error
 	printItemAndPrice(printer *escpos.Escpos, quantity int64, name string, price int64) error
 	printTotalPrice(printer *escpos.Escpos, price int64) error
+	printRecipeCollection(printer *escpos.Escpos) error
+	printPaymentMethod(printer *escpos.Escpos, method string, total int64) error
 	printAndCut(printer *escpos.Escpos) error
 }
 
@@ -107,12 +109,42 @@ func (r printRepository) printTotalPrice(printer *escpos.Escpos, price int64) er
 		return err
 	}
 	defer c.Close()
-	text := fmt.Sprintf("%.2f€\n\n", float64(price)/100)
+	text := fmt.Sprintf("TOTALE: %.2f€\n", float64(price)/100)
 	convertedText := c.ConvString(text)
-	_, err = printer.Bold(true).Reverse(false).Size(1, 1).Justify(escpos.JustifyRight).Write(convertedText)
+	_, err = printer.Bold(true).Reverse(false).Size(2, 1).Justify(escpos.JustifyRight).Write(convertedText)
+
+	textIva := fmt.Sprintf("di cui IVA 10%%: %.2f€\n", (float64(price)*0.10/1.10)/100)
+	convertedTextIva := c.ConvString(textIva)
+	_, err = printer.Bold(false).Reverse(false).Size(1, 1).Justify(escpos.JustifyRight).Write(convertedTextIva)
+	return err
+}
+
+func (r printRepository) printRecipeCollection(printer *escpos.Escpos) error {
+	printer.Bold(false).Reverse(false).Size(1, 1).Justify(escpos.JustifyCenter).Write("\n\n")
+	text := "Ritirare lo scontrino fiscale in Cassa\n"
+	_, err := printer.Bold(false).Reverse(false).Size(1, 1).Justify(escpos.JustifyCenter).Write(text)
+	return err
+}
+
+func (r printRepository) printPaymentMethod(printer *escpos.Escpos, method string, total int64) error {
+	c, err := iconv.Open("cp858", "utf-8")
+	if err != nil {
+		return err
+	}
+	defer c.Close()
+	text := ("\nPAGATO IN CONTANTI\n\n")
+	if method == "card" {
+		text = ("\nPAGATO CON BANCOMAT\n\n")
+	}
+	_, err = printer.Bold(true).Reverse(false).Size(2, 2).Justify(escpos.JustifyCenter).Write(text)
+
+	text = fmt.Sprintf("   %.2f €  \n\n", float64(total)/100)
+	convertedText := c.ConvString(text)
+	_, err = printer.Bold(true).Reverse(true).Size(2, 2).Justify(escpos.JustifyCenter).Write(convertedText)
 	return err
 }
 
 func (r printRepository) printAndCut(printer *escpos.Escpos) error {
+	printer.Bold(false).Reverse(false).Size(1, 1).Justify(escpos.JustifyCenter).Write("\n\n\n")
 	return printer.PrintAndCut()
 }

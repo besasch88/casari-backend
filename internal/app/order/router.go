@@ -105,7 +105,7 @@ func (r orderRouter) register(router *gin.RouterGroup) {
 	router.POST(
 		"/tables/:tableId/order/print",
 		ceng_auth.AuthMiddleware([]string{ceng_auth.READ_MENU, ceng_auth.WRITE_MENU}),
-		ceng_timeout.TimeoutMiddleware(time.Duration(1)*time.Second),
+		ceng_timeout.TimeoutMiddleware(time.Duration(5)*time.Second),
 		func(ctx *gin.Context) {
 			// Input validation
 			var request printOrderInputDto

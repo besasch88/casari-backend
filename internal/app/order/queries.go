@@ -106,3 +106,30 @@ ORDER BY
     mi.position,
     mo.position;
 `
+
+const GetTotalPriceAndPaymentByTableQuery = `
+SELECT
+    t.name AS table_name,
+    t.created_at AS table_created_at,
+    t.payment_method as table_payment,
+    p.id AS printer_id,
+    p.title AS printer_title,
+    p.url AS printer_url,
+    SUM(cs.quantity * COALESCE(mo.price, mi.price)) AS price_total
+FROM ceng_order o
+JOIN ceng_table t ON o.table_id = t.id
+JOIN ceng_course c ON c.order_id = o.id
+JOIN ceng_course_selection cs ON cs.course_id = c.id AND cs.quantity > 0
+JOIN ceng_menu_item mi ON mi.id = cs.menu_item_id
+JOIN ceng_menu_category mc ON mc.id = mi.menu_category_id
+JOIN ceng_printer p ON p.title = 'PAGAMENTO'
+LEFT JOIN ceng_menu_option mo ON mo.id = cs.menu_option_id
+WHERE o.table_id = $1
+GROUP BY
+    t.name,
+    t.created_at,
+    t.payment_method,
+    p.id,
+    p.title,
+    p.url
+`

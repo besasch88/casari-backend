@@ -81,3 +81,17 @@ type OrderDetailModel struct {
 func (m OrderDetailModel) toEntity() OrderDetailEntity {
 	return OrderDetailEntity(m)
 }
+
+type PaymentDetailModel struct {
+	TableName      string    `gorm:"column:table_name"`
+	TableCreatedAt time.Time `gorm:"column:table_created_at"`
+	TablePayment   string    `gorm:"column:table_payment"`
+	PrinterId      string    `gorm:"column:printer_id"`
+	PrinterTitle   string    `gorm:"column:printer_title"`
+	PrinterURL     string    `gorm:"column:printer_url"`
+	PriceTotal     int64     `gorm:"column:price_total"`
+}
+
+func (m PaymentDetailModel) toEntity() PaymentDetailEntity {
+	return PaymentDetailEntity(m)
+}

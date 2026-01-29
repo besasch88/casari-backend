@@ -34,3 +34,13 @@ type OrderDetailEntity struct {
 	MenuOptionPrice *int64
 	Quantity        int64
 }
+
+type PaymentDetailEntity struct {
+	TableName      string
+	TableCreatedAt time.Time
+	TablePayment   string
+	PrinterId      string
+	PrinterTitle   string
+	PrinterURL     string
+	PriceTotal     int64
+}

@@ -22,6 +22,7 @@ type orderRepositoryInterface interface {
 	getOrderDetailByTableID(tx *gorm.DB, tableID uuid.UUID) ([]OrderDetailEntity, error)
 	getOrderDetailByTableIDAndCourseID(tx *gorm.DB, tableID uuid.UUID, courseID uuid.UUID) ([]OrderDetailEntity, error)
 	getPricedOrderByTableID(tx *gorm.DB, tableID uuid.UUID) ([]OrderDetailEntity, error)
+	getTotalPriceAndPaymentByTableID(tx *gorm.DB, tableID uuid.UUID) (PaymentDetailEntity, error)
 }
 
 type orderRepository struct {
@@ -211,4 +212,13 @@ func (r orderRepository) getPricedOrderByTableID(tx *gorm.DB, tableID uuid.UUID)
 		entities = append(entities, entity)
 	}
 	return entities, nil
+}
+
+func (r orderRepository) getTotalPriceAndPaymentByTableID(tx *gorm.DB, tableID uuid.UUID) (PaymentDetailEntity, error) {
+	var model PaymentDetailModel
+	err := tx.Raw(GetTotalPriceAndPaymentByTableQuery, tableID).First(&model).Error
+	if err != nil {
+		return PaymentDetailEntity{}, err
+	}
+	return model.toEntity(), nil
 }
