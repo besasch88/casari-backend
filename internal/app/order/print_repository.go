@@ -6,7 +6,7 @@ import (
 	"time"
 	"unicode/utf8"
 
-	"github.com/hennedo/escpos"
+	"github.com/justinmichaelvieira/escpos"
 	"golang.org/x/text/encoding/charmap"
 )
 

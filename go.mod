@@ -13,6 +13,7 @@ require (
 	github.com/google/uuid v1.6.0
 	github.com/hennedo/escpos v0.0.1
 	github.com/joho/godotenv v1.5.1
+	github.com/justinmichaelvieira/escpos v0.1.1
 	github.com/lib/pq v1.10.9
 	github.com/urfave/cli v1.22.17
 	go.uber.org/zap v1.27.0
@@ -43,6 +44,7 @@ require (
 	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/jonboulle/clockwork v0.5.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
+	github.com/justinmichaelvieira/iconv v0.1.0 // indirect
 	github.com/klauspost/cpuid/v2 v2.3.0 // indirect
 	github.com/leodido/go-urn v1.4.0 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
