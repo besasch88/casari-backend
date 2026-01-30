@@ -7,7 +7,7 @@ import (
 	"unicode/utf8"
 
 	"github.com/hennedo/escpos"
-	"github.com/qiniu/iconv"
+	"golang.org/x/text/encoding/charmap"
 )
 
 type printRepositoryInterface interface {
@@ -91,11 +91,7 @@ func (r printRepository) printItem(printer *escpos.Escpos, quantity int64, name 
 
 func (r printRepository) printItemAndPrice(printer *escpos.Escpos, quantity int64, name string, price int64) error {
 	partial := quantity * price
-	c, err := iconv.Open("cp858", "utf-8")
-	if err != nil {
-		return err
-	}
-	defer c.Close()
+	encoder := charmap.CodePage858.NewEncoder()
 	leftString := fmt.Sprintf("%2d x %s", quantity, name)
 	rightString := fmt.Sprintf("%2d x %.2f€\n", quantity, float64(price)/100)
 	totalString := fmt.Sprintf("= %.2f€\n", float64(partial)/100)
@@ -104,12 +100,18 @@ func (r printRepository) printItemAndPrice(printer *escpos.Escpos, quantity int6
 	if toRepeat > 0 {
 		spaceString = strings.Repeat(" ", toRepeat)
 	}
-	str := c.ConvString(fmt.Sprintf("%s%s%s", leftString, spaceString, rightString))
+	str, err := encoder.String(fmt.Sprintf("%s%s%s", leftString, spaceString, rightString))
+	if err != nil {
+		return err
+	}
 	_, err = printer.Bold(false).Reverse(false).Size(1, 1).Justify(escpos.JustifyLeft).Write(str)
 	if err != nil {
 		return err
 	}
-	totalStr := c.ConvString(fmt.Sprintf("%s", totalString))
+	totalStr, err := encoder.String(fmt.Sprintf("%s", totalString))
+	if err != nil {
+		return err
+	}
 	_, err = printer.Bold(true).Reverse(false).Size(1, 1).Justify(escpos.JustifyRight).Write(totalStr)
 	if err != nil {
 		return err
@@ -118,19 +120,21 @@ func (r printRepository) printItemAndPrice(printer *escpos.Escpos, quantity int6
 }
 
 func (r printRepository) printTotalPrice(printer *escpos.Escpos, price int64) error {
-	c, err := iconv.Open("cp858", "utf-8")
+	encoder := charmap.CodePage858.NewEncoder()
+	text := fmt.Sprintf("TOTALE: %.2f€\n", float64(price)/100)
+	convertedText, err := encoder.String(text)
 	if err != nil {
 		return err
 	}
-	defer c.Close()
-	text := fmt.Sprintf("TOTALE: %.2f€\n", float64(price)/100)
-	convertedText := c.ConvString(text)
 	_, err = printer.Bold(true).Reverse(false).Size(2, 1).Justify(escpos.JustifyRight).Write(convertedText)
 	if err != nil {
 		return err
 	}
 	textIva := fmt.Sprintf("di cui IVA 10%%: %.2f€\n", (float64(price)*0.10/1.10)/100)
-	convertedTextIva := c.ConvString(textIva)
+	convertedTextIva, err := encoder.String(textIva)
+	if err != nil {
+		return err
+	}
 	_, err = printer.Bold(false).Reverse(false).Size(1, 1).Justify(escpos.JustifyRight).Write(convertedTextIva)
 	if err != nil {
 		return err
@@ -152,21 +156,20 @@ func (r printRepository) printRecipeCollection(printer *escpos.Escpos) error {
 }
 
 func (r printRepository) printPaymentMethod(printer *escpos.Escpos, method string, total int64) error {
-	c, err := iconv.Open("cp858", "utf-8")
-	if err != nil {
-		return err
-	}
-	defer c.Close()
+	encoder := charmap.CodePage858.NewEncoder()
 	text := ("\nPAGATO IN CONTANTI\n\n")
 	if method == "card" {
 		text = ("\nPAGATO CON BANCOMAT\n\n")
 	}
-	_, err = printer.Bold(true).Reverse(false).Size(2, 2).Justify(escpos.JustifyCenter).Write(text)
+	_, err := printer.Bold(true).Reverse(false).Size(2, 2).Justify(escpos.JustifyCenter).Write(text)
 	if err != nil {
 		return err
 	}
 	text2 := fmt.Sprintf("   %.2f €  \n\n", float64(total)/100)
-	convertedText2 := c.ConvString(text2)
+	convertedText2, err := encoder.String(text2)
+	if err != nil {
+		return err
+	}
 	_, err = printer.Bold(true).Reverse(true).Size(2, 2).Justify(escpos.JustifyCenter).Write(convertedText2)
 	if err != nil {
 		return err
