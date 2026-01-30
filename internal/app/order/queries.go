@@ -125,6 +125,7 @@ JOIN ceng_menu_category mc ON mc.id = mi.menu_category_id
 JOIN ceng_printer p ON p.title = 'PAGAMENTO'
 LEFT JOIN ceng_menu_option mo ON mo.id = cs.menu_option_id
 WHERE o.table_id = $1
+AND p.active = true
 GROUP BY
     t.name,
     t.created_at,

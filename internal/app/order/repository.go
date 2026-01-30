@@ -217,7 +217,9 @@ func (r orderRepository) getPricedOrderByTableID(tx *gorm.DB, tableID uuid.UUID)
 func (r orderRepository) getTotalPriceAndPaymentByTableID(tx *gorm.DB, tableID uuid.UUID) (PaymentDetailEntity, error) {
 	var model PaymentDetailModel
 	err := tx.Raw(GetTotalPriceAndPaymentByTableQuery, tableID).First(&model).Error
-	if err != nil {
+	if err == gorm.ErrRecordNotFound {
+		return PaymentDetailEntity{}, nil
+	} else if err != nil {
 		return PaymentDetailEntity{}, err
 	}
 	return model.toEntity(), nil
