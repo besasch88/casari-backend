@@ -52,7 +52,9 @@ func (r printRepository) printTableCreation(printer *escpos.Escpos, date time.Ti
 		location = time.Local
 	}
 	date = date.In(location)
-	if _, err := printer.Bold(false).Reverse(false).Size(1, 1).Justify(escpos.JustifyCenter).Write(fmt.Sprintf("Creato il %s\n", date.Format("02/01/2006 15:04"))); err != nil {
+	// Print text
+	text := fmt.Sprintf("Creato il %s\n", date.Format("02/01/2006 15:04"))
+	if _, err := printer.Bold(false).Reverse(false).Size(1, 1).Justify(escpos.JustifyCenter).Write(text); err != nil {
 		return err
 	}
 	return nil
@@ -73,12 +75,18 @@ func (r printRepository) printCourse(printer *escpos.Escpos, number int64) error
 
 func (r printRepository) printLine(printer *escpos.Escpos) error {
 	_, err := printer.Bold(false).Reverse(false).Size(2, 2).Justify(escpos.JustifyLeft).Write("------------------------\n")
-	return err
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (r printRepository) printItem(printer *escpos.Escpos, quantity int64, name string) error {
 	_, err := printer.Bold(false).Reverse(false).Size(1, 2).Justify(escpos.JustifyLeft).Write(fmt.Sprintf("%2d x %s\n\n", quantity, name))
-	return err
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (r printRepository) printItemAndPrice(printer *escpos.Escpos, quantity int64, name string, price int64) error {
@@ -98,9 +106,15 @@ func (r printRepository) printItemAndPrice(printer *escpos.Escpos, quantity int6
 	}
 	str := c.ConvString(fmt.Sprintf("%s%s%s", leftString, spaceString, rightString))
 	_, err = printer.Bold(false).Reverse(false).Size(1, 1).Justify(escpos.JustifyLeft).Write(str)
+	if err != nil {
+		return err
+	}
 	totalStr := c.ConvString(fmt.Sprintf("%s", totalString))
 	_, err = printer.Bold(true).Reverse(false).Size(1, 1).Justify(escpos.JustifyRight).Write(totalStr)
-	return err
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (r printRepository) printTotalPrice(printer *escpos.Escpos, price int64) error {
@@ -112,18 +126,29 @@ func (r printRepository) printTotalPrice(printer *escpos.Escpos, price int64) er
 	text := fmt.Sprintf("TOTALE: %.2f€\n", float64(price)/100)
 	convertedText := c.ConvString(text)
 	_, err = printer.Bold(true).Reverse(false).Size(2, 1).Justify(escpos.JustifyRight).Write(convertedText)
-
+	if err != nil {
+		return err
+	}
 	textIva := fmt.Sprintf("di cui IVA 10%%: %.2f€\n", (float64(price)*0.10/1.10)/100)
 	convertedTextIva := c.ConvString(textIva)
 	_, err = printer.Bold(false).Reverse(false).Size(1, 1).Justify(escpos.JustifyRight).Write(convertedTextIva)
-	return err
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (r printRepository) printRecipeCollection(printer *escpos.Escpos) error {
-	printer.Bold(false).Reverse(false).Size(1, 1).Justify(escpos.JustifyCenter).Write("\n\n")
+	_, err := printer.Bold(false).Reverse(false).Size(1, 1).Justify(escpos.JustifyCenter).Write("\n\n")
+	if err != nil {
+		return err
+	}
 	text := "Ritirare lo scontrino fiscale in Cassa\n"
-	_, err := printer.Bold(false).Reverse(false).Size(1, 1).Justify(escpos.JustifyCenter).Write(text)
-	return err
+	_, err = printer.Bold(false).Reverse(false).Size(1, 1).Justify(escpos.JustifyCenter).Write(text)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (r printRepository) printPaymentMethod(printer *escpos.Escpos, method string, total int64) error {
@@ -137,14 +162,26 @@ func (r printRepository) printPaymentMethod(printer *escpos.Escpos, method strin
 		text = ("\nPAGATO CON BANCOMAT\n\n")
 	}
 	_, err = printer.Bold(true).Reverse(false).Size(2, 2).Justify(escpos.JustifyCenter).Write(text)
-
-	text = fmt.Sprintf("   %.2f €  \n\n", float64(total)/100)
-	convertedText := c.ConvString(text)
-	_, err = printer.Bold(true).Reverse(true).Size(2, 2).Justify(escpos.JustifyCenter).Write(convertedText)
-	return err
+	if err != nil {
+		return err
+	}
+	text2 := fmt.Sprintf("   %.2f €  \n\n", float64(total)/100)
+	convertedText2 := c.ConvString(text2)
+	_, err = printer.Bold(true).Reverse(true).Size(2, 2).Justify(escpos.JustifyCenter).Write(convertedText2)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (r printRepository) printAndCut(printer *escpos.Escpos) error {
-	printer.Bold(false).Reverse(false).Size(1, 1).Justify(escpos.JustifyCenter).Write("\n\n\n")
-	return printer.PrintAndCut()
+	_, err := printer.Bold(false).Reverse(false).Size(1, 1).Justify(escpos.JustifyCenter).Write("\n\n\n")
+	if err != nil {
+		return err
+	}
+	err = printer.PrintAndCut()
+	if err != nil {
+		return err
+	}
+	return nil
 }

@@ -77,28 +77,47 @@ func (s printService) printBill(tableId uuid.UUID) error {
 	}
 	defer conn.Close()
 	printer := escpos.New(conn)
-	s.printRepository.printTable(printer, items[0].TableName)
-	s.printRepository.printPrinterName(printer, items[0].PrinterTitle)
-	s.printRepository.printTableCreation(printer, items[0].TableCreatedAt)
-	s.printRepository.printLine(printer)
+	if err := s.printRepository.printTable(printer, items[0].TableName); err != nil {
+		return err
+	}
+	if err := s.printRepository.printPrinterName(printer, items[0].PrinterTitle); err != nil {
+		return err
+	}
+	if err := s.printRepository.printTableCreation(printer, items[0].TableCreatedAt); err != nil {
+		return err
+	}
+	if err := s.printRepository.printLine(printer); err != nil {
+		return err
+	}
 	total := int64(0)
 	for _, item := range items {
 		if item.MenuOptionTitle != nil {
-			err = s.printRepository.printItemAndPrice(printer, item.Quantity, *item.MenuOptionTitle, *item.MenuOptionPrice)
+			if err := s.printRepository.printItemAndPrice(printer, item.Quantity, *item.MenuOptionTitle, *item.MenuOptionPrice); err != nil {
+				return err
+			}
 			total = total + (item.Quantity * *item.MenuOptionPrice)
 		} else {
-			err = s.printRepository.printItemAndPrice(printer, item.Quantity, item.MenuItemTitle, item.MenuItemPrice)
+			if err := s.printRepository.printItemAndPrice(printer, item.Quantity, item.MenuItemTitle, item.MenuItemPrice); err != nil {
+				return err
+			}
 			total = total + (item.Quantity * item.MenuItemPrice)
 		}
-		if err != nil {
-			return err
-		}
 	}
-	s.printRepository.printLine(printer)
-	s.printRepository.printTotalPrice(printer, total)
-	s.printRepository.printLine(printer)
-	s.printRepository.printRecipeCollection(printer)
-	s.printRepository.printAndCut(printer)
+	if err := s.printRepository.printLine(printer); err != nil {
+		return err
+	}
+	if err := s.printRepository.printTotalPrice(printer, total); err != nil {
+		return err
+	}
+	if err := s.printRepository.printLine(printer); err != nil {
+		return err
+	}
+	if err := s.printRepository.printRecipeCollection(printer); err != nil {
+		return err
+	}
+	if err := s.printRepository.printAndCut(printer); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -116,12 +135,24 @@ func (s printService) printPayment(tableId uuid.UUID) error {
 	}
 	defer conn.Close()
 	printer := escpos.New(conn)
-	s.printRepository.printTable(printer, item.TableName)
-	s.printRepository.printPrinterName(printer, item.PrinterTitle)
-	s.printRepository.printTableCreation(printer, item.TableCreatedAt)
-	s.printRepository.printLine(printer)
-	s.printRepository.printPaymentMethod(printer, item.TablePayment, item.PriceTotal)
-	s.printRepository.printAndCut(printer)
+	if err := s.printRepository.printTable(printer, item.TableName); err != nil {
+		return err
+	}
+	if err := s.printRepository.printPrinterName(printer, item.PrinterTitle); err != nil {
+		return err
+	}
+	if err := s.printRepository.printTableCreation(printer, item.TableCreatedAt); err != nil {
+		return err
+	}
+	if err := s.printRepository.printLine(printer); err != nil {
+		return err
+	}
+	if err := s.printRepository.printPaymentMethod(printer, item.TablePayment, item.PriceTotal); err != nil {
+		return err
+	}
+	if err := s.printRepository.printAndCut(printer); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -148,25 +179,39 @@ func (s printService) printItems(items []OrderDetailEntity) error {
 			printer = escpos.New(conn)
 			lastPrinterTitle = item.PrinterTitle
 			lastCourseID = ""
-			s.printRepository.printTable(printer, item.TableName)
-			s.printRepository.printPrinterName(printer, item.PrinterTitle)
-			s.printRepository.printTableCreation(printer, item.TableCreatedAt)
+			if err := s.printRepository.printTable(printer, item.TableName); err != nil {
+				return err
+			}
+			if err := s.printRepository.printPrinterName(printer, item.PrinterTitle); err != nil {
+				return err
+			}
+			if err := s.printRepository.printTableCreation(printer, item.TableCreatedAt); err != nil {
+				return err
+			}
 		}
 		if item.CourseID != lastCourseID {
 			lastCourseID = item.CourseID
 			// The course changed, so print it on paper
-			s.printRepository.printCourse(printer, item.CourseNumber)
+			if err := s.printRepository.printCourse(printer, item.CourseNumber); err != nil {
+				return err
+			}
 		}
 		// Now for each element, I can print them
 		if item.MenuOptionTitle != nil {
-			s.printRepository.printItem(printer, item.Quantity, *item.MenuOptionTitle)
+			if err := s.printRepository.printItem(printer, item.Quantity, *item.MenuOptionTitle); err != nil {
+				return err
+			}
 		} else {
-			s.printRepository.printItem(printer, item.Quantity, item.MenuItemTitle)
+			if err := s.printRepository.printItem(printer, item.Quantity, item.MenuItemTitle); err != nil {
+				return err
+			}
 		}
 	}
 	// At the end, if needed, print and cut and close the connection
 	if conn != nil && printer != nil {
-		s.printRepository.printAndCut(printer)
+		if err := s.printRepository.printAndCut(printer); err != nil {
+			return err
+		}
 		conn.Close()
 	}
 	return nil

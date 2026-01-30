@@ -195,7 +195,7 @@ func (s orderService) updateOrder(ctx *gin.Context, input updateOrderInputDto) (
 				// If there are new course input, let's create them
 				lastPosition++
 				course = courseEntity{
-					ID:        uuid.New(),
+					ID:        ceng_utils.GetUUIDFromString(inputCourse.ID),
 					OrderID:   order.ID,
 					Position:  lastPosition,
 					CreatedAt: now,
