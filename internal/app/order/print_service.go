@@ -7,7 +7,7 @@ import (
 	"github.com/casari-eat-n-go/backend/internal/pkg/ceng_utils"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
-	"github.com/hennedo/escpos"
+	"github.com/justinmichaelvieira/escpos"
 	"gorm.io/gorm"
 )
 
