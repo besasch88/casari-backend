@@ -19,10 +19,10 @@ type orderRepositoryInterface interface {
 	saveCourse(tx *gorm.DB, course courseEntity, operation ceng_db.SaveOperation) (courseEntity, error)
 	saveSelection(tx *gorm.DB, selection courseSelectionEntity, operation ceng_db.SaveOperation) (courseSelectionEntity, error)
 	deleteSelectionsByCourseID(tx *gorm.DB, courseID uuid.UUID) error
-	getOrderDetailByTableID(tx *gorm.DB, tableID uuid.UUID) ([]OrderDetailEntity, error)
-	getOrderDetailByTableIDAndCourseID(tx *gorm.DB, tableID uuid.UUID, courseID uuid.UUID) ([]OrderDetailEntity, error)
-	getPricedOrderByTableID(tx *gorm.DB, tableID uuid.UUID) ([]OrderDetailEntity, error)
-	getTotalPriceAndPaymentByTableID(tx *gorm.DB, tableID uuid.UUID) (PaymentDetailEntity, error)
+	getOrderDetailByTableID(tx *gorm.DB, tableID uuid.UUID) ([]orderDetailEntity, error)
+	getOrderDetailByTableIDAndCourseID(tx *gorm.DB, tableID uuid.UUID, courseID uuid.UUID) ([]orderDetailEntity, error)
+	getPricedOrderByTableID(tx *gorm.DB, tableID uuid.UUID) ([]orderDetailEntity, error)
+	getTotalPriceAndPaymentByTableID(tx *gorm.DB, tableID uuid.UUID) (paymentDetailEntity, error)
 }
 
 type orderRepository struct {
@@ -173,26 +173,26 @@ func (r orderRepository) deleteSelectionsByCourseID(tx *gorm.DB, courseID uuid.U
 	return err
 }
 
-func (r orderRepository) getOrderDetailByTableID(tx *gorm.DB, tableID uuid.UUID) ([]OrderDetailEntity, error) {
-	var models []OrderDetailModel
-	err := tx.Raw(GetOrderByTableQuery, tableID).Scan(&models).Error
+func (r orderRepository) getOrderDetailByTableID(tx *gorm.DB, tableID uuid.UUID) ([]orderDetailEntity, error) {
+	var models []orderDetailModel
+	err := tx.Raw(getOrderByTableQuery, tableID).Scan(&models).Error
 	if err != nil {
-		return []OrderDetailEntity{}, err
+		return []orderDetailEntity{}, err
 	}
-	var entities []OrderDetailEntity = []OrderDetailEntity{}
+	var entities []orderDetailEntity = []orderDetailEntity{}
 	for _, model := range models {
 		entity := model.toEntity()
 		entities = append(entities, entity)
 	}
 	return entities, nil
 }
-func (r orderRepository) getOrderDetailByTableIDAndCourseID(tx *gorm.DB, tableID uuid.UUID, courseID uuid.UUID) ([]OrderDetailEntity, error) {
-	var models []OrderDetailModel
+func (r orderRepository) getOrderDetailByTableIDAndCourseID(tx *gorm.DB, tableID uuid.UUID, courseID uuid.UUID) ([]orderDetailEntity, error) {
+	var models []orderDetailModel
 	err := tx.Raw(getCourseByTableAndCourseQuery, tableID, courseID).Scan(&models).Error
 	if err != nil {
-		return []OrderDetailEntity{}, err
+		return []orderDetailEntity{}, err
 	}
-	var entities []OrderDetailEntity = []OrderDetailEntity{}
+	var entities []orderDetailEntity = []orderDetailEntity{}
 	for _, model := range models {
 		entity := model.toEntity()
 		entities = append(entities, entity)
@@ -200,13 +200,13 @@ func (r orderRepository) getOrderDetailByTableIDAndCourseID(tx *gorm.DB, tableID
 	return entities, nil
 }
 
-func (r orderRepository) getPricedOrderByTableID(tx *gorm.DB, tableID uuid.UUID) ([]OrderDetailEntity, error) {
-	var models []OrderDetailModel
-	err := tx.Raw(GetPricedOrderByTableQuery, tableID).Scan(&models).Error
+func (r orderRepository) getPricedOrderByTableID(tx *gorm.DB, tableID uuid.UUID) ([]orderDetailEntity, error) {
+	var models []orderDetailModel
+	err := tx.Raw(getPricedOrderByTableQuery, tableID).Scan(&models).Error
 	if err != nil {
-		return []OrderDetailEntity{}, err
+		return []orderDetailEntity{}, err
 	}
-	var entities []OrderDetailEntity = []OrderDetailEntity{}
+	var entities []orderDetailEntity = []orderDetailEntity{}
 	for _, model := range models {
 		entity := model.toEntity()
 		entities = append(entities, entity)
@@ -214,13 +214,13 @@ func (r orderRepository) getPricedOrderByTableID(tx *gorm.DB, tableID uuid.UUID)
 	return entities, nil
 }
 
-func (r orderRepository) getTotalPriceAndPaymentByTableID(tx *gorm.DB, tableID uuid.UUID) (PaymentDetailEntity, error) {
-	var model PaymentDetailModel
-	err := tx.Raw(GetTotalPriceAndPaymentByTableQuery, tableID).First(&model).Error
+func (r orderRepository) getTotalPriceAndPaymentByTableID(tx *gorm.DB, tableID uuid.UUID) (paymentDetailEntity, error) {
+	var model paymentDetailModel
+	err := tx.Raw(getTotalPriceAndPaymentByTableQuery, tableID).First(&model).Error
 	if err == gorm.ErrRecordNotFound {
-		return PaymentDetailEntity{}, nil
+		return paymentDetailEntity{}, nil
 	} else if err != nil {
-		return PaymentDetailEntity{}, err
+		return paymentDetailEntity{}, err
 	}
 	return model.toEntity(), nil
 }

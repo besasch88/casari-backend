@@ -14,7 +14,7 @@ import (
 )
 
 type menuOptionServiceInterface interface {
-	listMenuOptions(ctx *gin.Context, input ListMenuOptionsInputDto) ([]menuOptionEntity, int64, error)
+	listMenuOptions(ctx *gin.Context, input listMenuOptionsInputDto) ([]menuOptionEntity, int64, error)
 	getMenuOptionByID(ctx *gin.Context, input getMenuOptionInputDto) (menuOptionEntity, error)
 	createMenuOption(ctx *gin.Context, input createMenuOptionInputDto) (menuOptionEntity, error)
 	updateMenuOption(ctx *gin.Context, input updateMenuOptionInputDto) (menuOptionEntity, error)
@@ -35,7 +35,7 @@ func newMenuOptionService(storage *gorm.DB, pubSubAgent *ceng_pubsub.PubSubAgent
 	}
 }
 
-func (s menuOptionService) listMenuOptions(ctx *gin.Context, input ListMenuOptionsInputDto) ([]menuOptionEntity, int64, error) {
+func (s menuOptionService) listMenuOptions(ctx *gin.Context, input listMenuOptionsInputDto) ([]menuOptionEntity, int64, error) {
 	menuItemID := uuid.MustParse(input.MenuItemId)
 	if exists, err := s.repository.checkMenuItemExists(s.storage, menuItemID); err != nil {
 		return []menuOptionEntity{}, 0, ceng_err.ErrGeneric

@@ -33,7 +33,7 @@ func (r tableRouter) register(router *gin.RouterGroup) {
 		ceng_timeout.TimeoutMiddleware(time.Duration(1)*time.Second),
 		func(ctx *gin.Context) {
 			// Input validation
-			var request ListTablesInputDto
+			var request listTablesInputDto
 			if err := ceng_router.BindParameters(ctx, &request); err != nil {
 				ceng_router.ReturnValidationError(ctx, err)
 				return

@@ -156,7 +156,7 @@ func (s printService) printPayment(tableId uuid.UUID) error {
 	return nil
 }
 
-func (s printService) printItems(items []OrderDetailEntity) error {
+func (s printService) printItems(items []orderDetailEntity) error {
 	var conn net.Conn
 	var err error
 	var printer *escpos.Escpos

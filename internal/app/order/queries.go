@@ -1,6 +1,6 @@
 package order
 
-const GetOrderByTableQuery = `
+const getOrderByTableQuery = `
 SELECT
     t.name AS table_name,
     t.created_at AS table_created_at,
@@ -65,7 +65,7 @@ ORDER BY
     mo.position;
 `
 
-const GetPricedOrderByTableQuery = `
+const getPricedOrderByTableQuery = `
 SELECT
     t.name AS table_name,
     t.created_at AS table_created_at,
@@ -107,7 +107,7 @@ ORDER BY
     mo.position;
 `
 
-const GetTotalPriceAndPaymentByTableQuery = `
+const getTotalPriceAndPaymentByTableQuery = `
 SELECT
     t.name AS table_name,
     t.created_at AS table_created_at,

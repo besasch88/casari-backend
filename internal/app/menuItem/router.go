@@ -33,7 +33,7 @@ func (r menuItemRouter) register(router *gin.RouterGroup) {
 		ceng_timeout.TimeoutMiddleware(time.Duration(1)*time.Second),
 		func(ctx *gin.Context) {
 			// Input validation
-			var request ListMenuItemsInputDto
+			var request listMenuItemsInputDto
 			if err := ceng_router.BindParameters(ctx, &request); err != nil {
 				ceng_router.ReturnValidationError(ctx, err)
 				return

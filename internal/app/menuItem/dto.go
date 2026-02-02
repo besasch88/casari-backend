@@ -5,11 +5,11 @@ import (
 	"github.com/go-ozzo/ozzo-validation/v4/is"
 )
 
-type ListMenuItemsInputDto struct {
+type listMenuItemsInputDto struct {
 	MenuCategoryId string `uri:"menuCategoryId"`
 }
 
-func (r ListMenuItemsInputDto) validate() error {
+func (r listMenuItemsInputDto) validate() error {
 	return validation.ValidateStruct(&r,
 		validation.Field(&r.MenuCategoryId, validation.Required, is.UUID),
 	)

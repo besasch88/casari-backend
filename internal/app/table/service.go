@@ -15,7 +15,7 @@ import (
 )
 
 type tableServiceInterface interface {
-	listTables(ctx *gin.Context, input ListTablesInputDto) ([]tableEntity, int64, error)
+	listTables(ctx *gin.Context, input listTablesInputDto) ([]tableEntity, int64, error)
 	getTableByID(ctx *gin.Context, input getTableInputDto) (tableEntity, error)
 	createTable(ctx *gin.Context, input createTableInputDto) (tableEntity, error)
 	updateTable(ctx *gin.Context, input updateTableInputDto) (tableEntity, error)
@@ -36,7 +36,7 @@ func newTableService(storage *gorm.DB, pubSubAgent *ceng_pubsub.PubSubAgent, rep
 	}
 }
 
-func (s tableService) listTables(ctx *gin.Context, input ListTablesInputDto) ([]tableEntity, int64, error) {
+func (s tableService) listTables(ctx *gin.Context, input listTablesInputDto) ([]tableEntity, int64, error) {
 	requester := ceng_auth.GetAuthenticatedUserFromSession(ctx)
 	userId := ceng_utils.GetOptionalUUIDFromString(&requester.ID)
 	// Check if the user has a permission

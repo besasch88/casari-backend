@@ -5,11 +5,11 @@ import (
 	"github.com/go-ozzo/ozzo-validation/v4/is"
 )
 
-type ListTablesInputDto struct {
+type listTablesInputDto struct {
 	IncludeClosed *bool `form:"includeClosed"`
 }
 
-func (r ListTablesInputDto) validate() error {
+func (r listTablesInputDto) validate() error {
 	return validation.ValidateStruct(&r,
 		validation.Field(&r.IncludeClosed, validation.In(true, false)),
 	)

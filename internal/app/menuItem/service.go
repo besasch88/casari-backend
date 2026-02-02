@@ -14,7 +14,7 @@ import (
 )
 
 type menuItemServiceInterface interface {
-	listMenuItems(ctx *gin.Context, input ListMenuItemsInputDto) ([]menuItemEntity, int64, error)
+	listMenuItems(ctx *gin.Context, input listMenuItemsInputDto) ([]menuItemEntity, int64, error)
 	getMenuItemByID(ctx *gin.Context, input getMenuItemInputDto) (menuItemEntity, error)
 	createMenuItem(ctx *gin.Context, input createMenuItemInputDto) (menuItemEntity, error)
 	updateMenuItem(ctx *gin.Context, input updateMenuItemInputDto) (menuItemEntity, error)
@@ -35,7 +35,7 @@ func newMenuItemService(storage *gorm.DB, pubSubAgent *ceng_pubsub.PubSubAgent, 
 	}
 }
 
-func (s menuItemService) listMenuItems(ctx *gin.Context, input ListMenuItemsInputDto) ([]menuItemEntity, int64, error) {
+func (s menuItemService) listMenuItems(ctx *gin.Context, input listMenuItemsInputDto) ([]menuItemEntity, int64, error) {
 	menuCategoryID := uuid.MustParse(input.MenuCategoryId)
 	if exists, err := s.repository.checkMenuCategoryExists(s.storage, menuCategoryID); err != nil {
 		return []menuItemEntity{}, 0, ceng_err.ErrGeneric

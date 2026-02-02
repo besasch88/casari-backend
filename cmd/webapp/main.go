@@ -18,6 +18,7 @@ import (
 	"github.com/casari-eat-n-go/backend/internal/app/menuOption"
 	"github.com/casari-eat-n-go/backend/internal/app/order"
 	"github.com/casari-eat-n-go/backend/internal/app/printer"
+	"github.com/casari-eat-n-go/backend/internal/app/statistics"
 	"github.com/casari-eat-n-go/backend/internal/app/table"
 	"github.com/casari-eat-n-go/backend/internal/pkg/ceng_auth"
 	"github.com/casari-eat-n-go/backend/internal/pkg/ceng_cors"
@@ -99,6 +100,7 @@ func main() {
 	menu.Init(envs, dbConnection, pubSubAgent, v1Api)
 	table.Init(envs, dbConnection, pubSubAgent, v1Api)
 	order.Init(envs, dbConnection, pubSubAgent, v1Api)
+	statistics.Init(envs, dbConnection, pubSubAgent, v1Api)
 
 	// Start the scheduler
 	if err := scheduler.Init(); err != nil {

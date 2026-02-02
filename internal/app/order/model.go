@@ -63,7 +63,7 @@ func (m courseSelectionModel) toEntity() courseSelectionEntity {
 	return courseSelectionEntity(m)
 }
 
-type OrderDetailModel struct {
+type orderDetailModel struct {
 	TableName       string    `gorm:"column:table_name"`
 	TableCreatedAt  time.Time `gorm:"column:table_created_at"`
 	PrinterId       string    `gorm:"column:printer_id"`
@@ -78,11 +78,11 @@ type OrderDetailModel struct {
 	Quantity        int64     `gorm:"column:quantity"`
 }
 
-func (m OrderDetailModel) toEntity() OrderDetailEntity {
-	return OrderDetailEntity(m)
+func (m orderDetailModel) toEntity() orderDetailEntity {
+	return orderDetailEntity(m)
 }
 
-type PaymentDetailModel struct {
+type paymentDetailModel struct {
 	TableName      string    `gorm:"column:table_name"`
 	TableCreatedAt time.Time `gorm:"column:table_created_at"`
 	TablePayment   string    `gorm:"column:table_payment"`
@@ -92,6 +92,6 @@ type PaymentDetailModel struct {
 	PriceTotal     int64     `gorm:"column:price_total"`
 }
 
-func (m PaymentDetailModel) toEntity() PaymentDetailEntity {
-	return PaymentDetailEntity(m)
+func (m paymentDetailModel) toEntity() paymentDetailEntity {
+	return paymentDetailEntity(m)
 }

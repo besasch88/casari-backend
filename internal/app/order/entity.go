@@ -20,7 +20,7 @@ type orderEntityWithChilds struct {
 	Courses []courseEntityWithChilds `json:"courses"`
 }
 
-type OrderDetailEntity struct {
+type orderDetailEntity struct {
 	TableName       string
 	TableCreatedAt  time.Time
 	PrinterId       string
@@ -35,7 +35,7 @@ type OrderDetailEntity struct {
 	Quantity        int64
 }
 
-type PaymentDetailEntity struct {
+type paymentDetailEntity struct {
 	TableName      string
 	TableCreatedAt time.Time
 	TablePayment   string
