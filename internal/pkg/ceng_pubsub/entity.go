@@ -27,6 +27,8 @@ type MenuCategoryEventEntity struct {
 	Title     string     `json:"title"`
 	Position  int64      `json:"position"`
 	Active    *bool      `json:"active"`
+	Inside    *bool      `json:"inside"`
+	Outside   *bool      `json:"outside"`
 	PrinterID *uuid.UUID `json:"printerId"`
 	CreatedAt time.Time  `json:"createdAt"`
 	UpdatedAt time.Time  `json:"updatedAt"`
@@ -38,6 +40,8 @@ type MenuItemEventEntity struct {
 	Title          string    `json:"title"`
 	Position       int64     `json:"position"`
 	Active         *bool     `json:"active"`
+	Inside         *bool     `json:"inside"`
+	Outside        *bool     `json:"outside"`
 	Price          int64     `json:"price"`
 	CreatedAt      time.Time `json:"createdAt"`
 	UpdatedAt      time.Time `json:"updatedAt"`
@@ -49,6 +53,8 @@ type MenuOptionEventEntity struct {
 	Title      string    `json:"title"`
 	Position   int64     `json:"position"`
 	Active     *bool     `json:"active"`
+	Inside     *bool     `json:"inside"`
+	Outside    *bool     `json:"outside"`
 	Price      int64     `json:"price"`
 	CreatedAt  time.Time `json:"createdAt"`
 	UpdatedAt  time.Time `json:"updatedAt"`
@@ -59,6 +65,7 @@ type TableEventEntity struct {
 	UserID        uuid.UUID `json:"userId"`
 	Name          string    `json:"name"`
 	Close         *bool     `json:"close"`
+	Inside        *bool     `json:"inside"`
 	PaymentMethod *string   `json:"paymentMethod"`
 	CreatedAt     time.Time `json:"createdAt"`
 	UpdatedAt     time.Time `json:"updatedAt"`

@@ -43,7 +43,7 @@ func (s tableService) listTables(ctx *gin.Context, input listTablesInputDto) ([]
 	if slices.Contains(requester.Permissions, ceng_auth.READ_OTHER_TABLES) {
 		userId = nil
 	}
-	items, totalCount, err := s.repository.listTables(s.storage, userId, input.IncludeClosed, false)
+	items, totalCount, err := s.repository.listTables(s.storage, userId, input.Target == "inside", input.IncludeClosed, false)
 	if err != nil || items == nil {
 		return []tableEntity{}, 0, ceng_err.ErrGeneric
 	}
@@ -76,6 +76,7 @@ func (s tableService) createTable(ctx *gin.Context, input createTableInputDto) (
 		ID:            uuid.New(),
 		UserID:        *userId,
 		Name:          input.Name,
+		Inside:        input.Inside,
 		Close:         ceng_utils.BoolPtr(false),
 		PaymentMethod: nil,
 		CreatedAt:     now,
@@ -100,6 +101,7 @@ func (s tableService) createTable(ctx *gin.Context, input createTableInputDto) (
 					ID:            newTable.ID,
 					UserID:        newTable.UserID,
 					Name:          newTable.Name,
+					Inside:        newTable.Inside,
 					Close:         newTable.Close,
 					PaymentMethod: newTable.PaymentMethod,
 					CreatedAt:     newTable.CreatedAt,
@@ -154,6 +156,9 @@ func (s tableService) updateTable(ctx *gin.Context, input updateTableInputDto) (
 			}
 			updatedTable.Name = *input.Name
 		}
+		if input.Inside != nil {
+			updatedTable.Inside = input.Inside
+		}
 		if input.Close != nil {
 			updatedTable.Close = input.Close
 		}
@@ -177,6 +182,7 @@ func (s tableService) updateTable(ctx *gin.Context, input updateTableInputDto) (
 					ID:            updatedTable.ID,
 					UserID:        updatedTable.UserID,
 					Name:          updatedTable.Name,
+					Inside:        updatedTable.Inside,
 					Close:         updatedTable.Close,
 					PaymentMethod: updatedTable.PaymentMethod,
 					CreatedAt:     updatedTable.CreatedAt,
@@ -229,6 +235,7 @@ func (s tableService) deleteTable(ctx *gin.Context, input deleteTableInputDto) (
 					ID:            currentTable.ID,
 					UserID:        currentTable.UserID,
 					Name:          currentTable.Name,
+					Inside:        currentTable.Inside,
 					Close:         currentTable.Close,
 					PaymentMethod: currentTable.PaymentMethod,
 					CreatedAt:     currentTable.CreatedAt,

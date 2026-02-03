@@ -77,6 +77,8 @@ func (s menuItemService) createMenuItem(ctx *gin.Context, input createMenuItemIn
 		Position:       maxValue,
 		Title:          input.Title,
 		Active:         ceng_utils.BoolPtr(false),
+		Inside:         ceng_utils.BoolPtr(true),
+		Outside:        ceng_utils.BoolPtr(true),
 		Price:          input.Price,
 		CreatedAt:      now,
 		UpdatedAt:      now,
@@ -107,6 +109,8 @@ func (s menuItemService) createMenuItem(ctx *gin.Context, input createMenuItemIn
 					Position:  newMenuItem.Position,
 					Active:    newMenuItem.Active,
 					Price:     newMenuItem.Price,
+					Inside:    newMenuItem.Inside,
+					Outside:   newMenuItem.Outside,
 					CreatedAt: newMenuItem.CreatedAt,
 					UpdatedAt: newMenuItem.UpdatedAt,
 				},
@@ -133,6 +137,8 @@ func (s menuItemService) createMenuItem(ctx *gin.Context, input createMenuItemIn
 						Title:          updatedEntity.Title,
 						Position:       updatedEntity.Position,
 						Active:         updatedEntity.Active,
+						Inside:         updatedEntity.Inside,
+						Outside:        updatedEntity.Outside,
 						Price:          updatedEntity.Price,
 						CreatedAt:      updatedEntity.CreatedAt,
 						UpdatedAt:      updatedEntity.UpdatedAt,
@@ -185,6 +191,12 @@ func (s menuItemService) updateMenuItem(ctx *gin.Context, input updateMenuItemIn
 		if input.Active != nil {
 			updatedMenuItem.Active = input.Active
 		}
+		if input.Inside != nil {
+			updatedMenuItem.Inside = input.Inside
+		}
+		if input.Outside != nil {
+			updatedMenuItem.Outside = input.Outside
+		}
 		if input.Price != nil {
 			updatedMenuItem.Price = *input.Price
 		}
@@ -218,6 +230,8 @@ func (s menuItemService) updateMenuItem(ctx *gin.Context, input updateMenuItemIn
 					Title:          updatedMenuItem.Title,
 					Position:       updatedMenuItem.Position,
 					Active:         updatedMenuItem.Active,
+					Inside:         updatedMenuItem.Inside,
+					Outside:        updatedMenuItem.Outside,
 					Price:          updatedMenuItem.Price,
 					CreatedAt:      updatedMenuItem.CreatedAt,
 					UpdatedAt:      updatedMenuItem.UpdatedAt,
@@ -245,6 +259,8 @@ func (s menuItemService) updateMenuItem(ctx *gin.Context, input updateMenuItemIn
 						Title:          updatedEntity.Title,
 						Position:       updatedEntity.Position,
 						Active:         updatedEntity.Active,
+						Inside:         updatedEntity.Inside,
+						Outside:        updatedEntity.Outside,
 						Price:          updatedEntity.Price,
 						CreatedAt:      updatedEntity.CreatedAt,
 						UpdatedAt:      updatedEntity.UpdatedAt,
@@ -297,6 +313,8 @@ func (s menuItemService) deleteMenuItem(ctx *gin.Context, input deleteMenuItemIn
 					Title:          currentMenuItem.Title,
 					Position:       currentMenuItem.Position,
 					Active:         currentMenuItem.Active,
+					Inside:         currentMenuItem.Inside,
+					Outside:        currentMenuItem.Outside,
 					Price:          currentMenuItem.Price,
 					CreatedAt:      currentMenuItem.CreatedAt,
 					UpdatedAt:      currentMenuItem.UpdatedAt,
@@ -321,6 +339,8 @@ func (s menuItemService) deleteMenuItem(ctx *gin.Context, input deleteMenuItemIn
 						Title:          updatedEntity.Title,
 						Position:       updatedEntity.Position,
 						Active:         updatedEntity.Active,
+						Inside:         updatedEntity.Inside,
+						Outside:        updatedEntity.Outside,
 						CreatedAt:      updatedEntity.CreatedAt,
 						UpdatedAt:      updatedEntity.UpdatedAt,
 					},

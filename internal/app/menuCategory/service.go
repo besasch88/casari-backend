@@ -71,6 +71,8 @@ func (s menuCategoryService) createMenuCategory(ctx *gin.Context, input createMe
 		Title:     input.Title,
 		Position:  maxValue,
 		Active:    ceng_utils.BoolPtr(false),
+		Inside:    ceng_utils.BoolPtr(true),
+		Outside:   ceng_utils.BoolPtr(true),
 		PrinterID: ceng_utils.GetOptionalUUIDFromString(input.PrinterID),
 		CreatedAt: now,
 		UpdatedAt: now,
@@ -100,6 +102,8 @@ func (s menuCategoryService) createMenuCategory(ctx *gin.Context, input createMe
 					Title:     newMenuCategory.Title,
 					Position:  newMenuCategory.Position,
 					Active:    newMenuCategory.Active,
+					Inside:    newMenuCategory.Inside,
+					Outside:   newMenuCategory.Outside,
 					PrinterID: newMenuCategory.PrinterID,
 					CreatedAt: newMenuCategory.CreatedAt,
 					UpdatedAt: newMenuCategory.UpdatedAt,
@@ -126,6 +130,8 @@ func (s menuCategoryService) createMenuCategory(ctx *gin.Context, input createMe
 						Title:     updatedEntity.Title,
 						Position:  updatedEntity.Position,
 						Active:    updatedEntity.Active,
+						Inside:    updatedEntity.Inside,
+						Outside:   updatedEntity.Outside,
 						PrinterID: updatedEntity.PrinterID,
 						CreatedAt: updatedEntity.CreatedAt,
 						UpdatedAt: updatedEntity.UpdatedAt,
@@ -178,6 +184,12 @@ func (s menuCategoryService) updateMenuCategory(ctx *gin.Context, input updateMe
 		if input.Active != nil {
 			updatedMenuCategory.Active = input.Active
 		}
+		if input.Inside != nil {
+			updatedMenuCategory.Inside = input.Inside
+		}
+		if input.Outside != nil {
+			updatedMenuCategory.Outside = input.Outside
+		}
 		if input.Position != nil {
 			// If the step is moving in a lower position (e.g. from 10 to 3),
 			// we need to move it one step more, so that, the algorith to re-sort all steps correctly
@@ -207,6 +219,8 @@ func (s menuCategoryService) updateMenuCategory(ctx *gin.Context, input updateMe
 					Title:     updatedMenuCategory.Title,
 					Position:  updatedMenuCategory.Position,
 					Active:    updatedMenuCategory.Active,
+					Inside:    updatedMenuCategory.Inside,
+					Outside:   updatedMenuCategory.Outside,
 					PrinterID: updatedMenuCategory.PrinterID,
 					CreatedAt: updatedMenuCategory.CreatedAt,
 					UpdatedAt: updatedMenuCategory.UpdatedAt,
@@ -233,6 +247,8 @@ func (s menuCategoryService) updateMenuCategory(ctx *gin.Context, input updateMe
 						Title:     updatedEntity.Title,
 						Position:  updatedEntity.Position,
 						Active:    updatedEntity.Active,
+						Inside:    updatedEntity.Inside,
+						Outside:   updatedEntity.Outside,
 						PrinterID: updatedEntity.PrinterID,
 						CreatedAt: updatedEntity.CreatedAt,
 						UpdatedAt: updatedEntity.UpdatedAt,
@@ -286,6 +302,8 @@ func (s menuCategoryService) deleteMenuCategory(ctx *gin.Context, input deleteMe
 					Title:     currentMenuCategory.Title,
 					Position:  currentMenuCategory.Position,
 					Active:    currentMenuCategory.Active,
+					Inside:    currentMenuCategory.Inside,
+					Outside:   currentMenuCategory.Outside,
 					PrinterID: currentMenuCategory.PrinterID,
 					CreatedAt: currentMenuCategory.CreatedAt,
 					UpdatedAt: currentMenuCategory.UpdatedAt,
@@ -309,6 +327,8 @@ func (s menuCategoryService) deleteMenuCategory(ctx *gin.Context, input deleteMe
 						Title:     updatedEntity.Title,
 						Position:  updatedEntity.Position,
 						Active:    updatedEntity.Active,
+						Inside:    updatedEntity.Inside,
+						Outside:   updatedEntity.Outside,
 						PrinterID: updatedEntity.PrinterID,
 						CreatedAt: updatedEntity.CreatedAt,
 						UpdatedAt: updatedEntity.UpdatedAt,

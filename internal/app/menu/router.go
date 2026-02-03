@@ -32,8 +32,18 @@ func (r menuRouter) register(router *gin.RouterGroup) {
 		ceng_auth.AuthMiddleware([]string{ceng_auth.READ_MENU}),
 		ceng_timeout.TimeoutMiddleware(time.Duration(1)*time.Second),
 		func(ctx *gin.Context) {
+			// Input validation
+			var request getMenuInputDto
+			if err := ceng_router.BindParameters(ctx, &request); err != nil {
+				ceng_router.ReturnValidationError(ctx, err)
+				return
+			}
+			if err := request.validate(); err != nil {
+				ceng_router.ReturnValidationError(ctx, err)
+				return
+			}
 			// Business Logic
-			item, err := r.service.getMenu(ctx)
+			item, err := r.service.getMenu(ctx, request)
 			// Errors and output handler
 			if err != nil {
 				zap.L().Error("Something went wrong", zap.String("service", "menu-router"), zap.Error(err))

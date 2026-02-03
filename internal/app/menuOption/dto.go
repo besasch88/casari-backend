@@ -44,6 +44,8 @@ type updateMenuOptionInputDto struct {
 	Title    *string `json:"title"`
 	Position *int64  `json:"position"`
 	Active   *bool   `json:"active"`
+	Inside   *bool   `json:"inside"`
+	Outside  *bool   `json:"outside"`
 	Price    *int64  `json:"price"`
 }
 
@@ -53,6 +55,8 @@ func (r updateMenuOptionInputDto) validate() error {
 		validation.Field(&r.Title, validation.NilOrNotEmpty, validation.Length(1, 255)),
 		validation.Field(&r.Position, validation.NilOrNotEmpty, validation.Min(1)),
 		validation.Field(&r.Active, validation.In(true, false)),
+		validation.Field(&r.Inside, validation.In(true, false)),
+		validation.Field(&r.Outside, validation.In(true, false)),
 		validation.Field(&r.Price, validation.Min(1), validation.Max(10000)),
 	)
 }

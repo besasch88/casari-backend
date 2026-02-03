@@ -10,7 +10,7 @@ import (
 )
 
 type tableRepositoryInterface interface {
-	listTables(tx *gorm.DB, userId *uuid.UUID, includeClosed *bool, forUpdate bool) ([]tableEntity, int64, error)
+	listTables(tx *gorm.DB, userId *uuid.UUID, inside bool, includeClosed *bool, forUpdate bool) ([]tableEntity, int64, error)
 	getTableByID(tx *gorm.DB, tableID uuid.UUID, userId *uuid.UUID, forUpdate bool) (tableEntity, error)
 	getOpenTableByName(tx *gorm.DB, tableName string, forUpdate bool) (tableEntity, error)
 	saveTable(tx *gorm.DB, table tableEntity, operation ceng_db.SaveOperation) (tableEntity, error)
@@ -27,13 +27,13 @@ func newTableRepository(relevanceThresholdConfig float64) tableRepository {
 	}
 }
 
-func (r tableRepository) listTables(tx *gorm.DB, userId *uuid.UUID, includeClosed *bool, forUpdate bool) ([]tableEntity, int64, error) {
+func (r tableRepository) listTables(tx *gorm.DB, userId *uuid.UUID, inside bool, includeClosed *bool, forUpdate bool) ([]tableEntity, int64, error) {
 	var totalCount int64
 	var order string
 
 	var models []*tableModel
-	query := tx.Model(tableModel{})
-	queryCount := tx.Model(tableModel{})
+	query := tx.Model(tableModel{}).Where("inside = ?", inside)
+	queryCount := tx.Model(tableModel{}).Where("inside = ?", inside)
 
 	if userId != nil {
 		query = query.Where("user_id = ?", userId)

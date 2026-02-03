@@ -8,7 +8,7 @@ import (
 )
 
 type menuServiceInterface interface {
-	getMenu(ctx *gin.Context) (menu, error)
+	getMenu(ctx *gin.Context, input getMenuInputDto) (menu, error)
 }
 
 type menuService struct {
@@ -25,16 +25,16 @@ func newMenuService(storage *gorm.DB, pubSubAgent *ceng_pubsub.PubSubAgent, repo
 	}
 }
 
-func (s menuService) getMenu(ctx *gin.Context) (menu, error) {
-	categories, _, err := s.repository.listMenuCategories(s.storage, false)
+func (s menuService) getMenu(ctx *gin.Context, input getMenuInputDto) (menu, error) {
+	categories, _, err := s.repository.listMenuCategories(s.storage, input.Target, false)
 	if err != nil || categories == nil {
 		return menu{}, ceng_err.ErrGeneric
 	}
-	items, _, err := s.repository.listMenuItems(s.storage, false)
+	items, _, err := s.repository.listMenuItems(s.storage, input.Target, false)
 	if err != nil || items == nil {
 		return menu{}, ceng_err.ErrGeneric
 	}
-	options, _, err := s.repository.listMenuOptions(s.storage, false)
+	options, _, err := s.repository.listMenuOptions(s.storage, input.Target, false)
 	if err != nil || options == nil {
 		return menu{}, ceng_err.ErrGeneric
 	}

@@ -11,6 +11,7 @@ type tableModel struct {
 	UserID        uuid.UUID `gorm:"column:user_id;type:varchar(36)"`
 	Name          string    `gorm:"column:name;type:varchar(255)"`
 	Close         *bool     `gorm:"column:close;type:boolean"`
+	Inside        *bool     `gorm:"column:inside;type:boolean"`
 	PaymentMethod *string   `gorm:"column:payment_method;type:varchar(255)"`
 	CreatedAt     time.Time `gorm:"column:created_at;type:timestamp;autoCreateTime:false"`
 	UpdatedAt     time.Time `gorm:"column:updated_at;type:timestamp;autoUpdateTime:false"`
