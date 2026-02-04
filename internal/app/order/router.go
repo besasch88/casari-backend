@@ -31,7 +31,7 @@ func newOrderRouter(service orderServiceInterface, printService printServiceInte
 func (r orderRouter) register(router *gin.RouterGroup) {
 	router.GET(
 		"/tables/:tableId/order",
-		ceng_auth.AuthMiddleware([]string{ceng_auth.READ_MENU}),
+		ceng_auth.AuthMiddleware([]string{ceng_auth.READ_MY_TABLES}),
 		ceng_timeout.TimeoutMiddleware(time.Duration(1)*time.Second),
 		func(ctx *gin.Context) {
 			// Input validation
@@ -65,7 +65,7 @@ func (r orderRouter) register(router *gin.RouterGroup) {
 
 	router.PUT(
 		"/tables/:tableId/order",
-		ceng_auth.AuthMiddleware([]string{ceng_auth.READ_MENU, ceng_auth.WRITE_MENU}),
+		ceng_auth.AuthMiddleware([]string{ceng_auth.WRITE_MY_TABLES}),
 		ceng_timeout.TimeoutMiddleware(time.Duration(1)*time.Second),
 		func(ctx *gin.Context) {
 			// Input validation
@@ -104,7 +104,7 @@ func (r orderRouter) register(router *gin.RouterGroup) {
 
 	router.POST(
 		"/tables/:tableId/order/print",
-		ceng_auth.AuthMiddleware([]string{ceng_auth.READ_MENU, ceng_auth.WRITE_MENU}),
+		ceng_auth.AuthMiddleware([]string{ceng_auth.READ_MY_TABLES, ceng_auth.WRITE_MY_TABLES}),
 		ceng_timeout.TimeoutMiddleware(time.Duration(5)*time.Second),
 		func(ctx *gin.Context) {
 			// Input validation
