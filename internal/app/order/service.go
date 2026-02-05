@@ -204,17 +204,18 @@ func (s orderService) updateOrder(ctx *gin.Context, input updateOrderInputDto) (
 				if _, err := s.repository.saveCourse(s.storage, course, ceng_db.Create); err != nil {
 					return ceng_err.ErrGeneric
 				}
-				// Send an event of order created
+				// Send an event of course created
 				if event, err := s.pubSubAgent.Persist(tx, ceng_pubsub.TopicCourseV1, ceng_pubsub.PubSubMessage{
 					Message: ceng_pubsub.PubSubEvent{
 						EventID:   uuid.New(),
 						EventTime: time.Now(),
-						EventType: ceng_pubsub.OrderCreatedEvent,
-						EventEntity: &ceng_pubsub.OrderEventEntity{
-							ID:        order.ID,
-							TableID:   order.TableID,
-							CreatedAt: order.CreatedAt,
-							UpdatedAt: order.UpdatedAt,
+						EventType: ceng_pubsub.CourseCreatedEvent,
+						EventEntity: &ceng_pubsub.CourseEventEntity{
+							ID:        course.ID,
+							OrderID:   course.OrderID,
+							Position:  course.Position,
+							CreatedAt: course.CreatedAt,
+							UpdatedAt: course.UpdatedAt,
 						},
 						EventChangedFields: ceng_utils.DiffStructs(courseEntity{}, course),
 					},
